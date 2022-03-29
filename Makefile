@@ -6,7 +6,7 @@ SDIR = ./src/
 
 CFLAGS=-I $(IDIR) -lm
 OBJ = $(BDIR)rsa.o $(BDIR)prime.o
-HEA = $(IDIR)rsa.h $(IDIR)prime.h
+# HEA = $(IDIR)rsa.h $(IDIR)prime.h
 DEB=-ggdb -Wall
 
 all: $(OBJ)
@@ -15,7 +15,10 @@ all: $(OBJ)
 main : $(OBJ)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
 
-$(BDIR)%.o: $(SDIR)%.c $(HEA)
+tests: $(OBJ)
+	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
+
+$(BDIR)%.o: $(SDIR)%.c $(IDIR)%.h
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:

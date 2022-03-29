@@ -1,14 +1,17 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 int is_prime_naive(long p)
 {
     // max under 2 ms p=5000
+    if (p == 1)
+        return 0;
     int s = (int)sqrt(p);
     int is_prime = 1;
-    for (int i = 3; i < s; i++)
-        if (!(p % s))
+    for (int i = 2; i <= s; i++)
+        if (!(p % i))
             is_prime = 0;
     return is_prime;
 }
@@ -20,6 +23,7 @@ long modpow_naive(long a, long m, long n)
     return rep;
 }
 
+/*
 long modpow(long a, long m, long n)
 {
     long int rep = a;
@@ -28,6 +32,32 @@ long modpow(long a, long m, long n)
     if (m % 2 && m > 2)
         return (rep * a) % n;
     return rep;
+}
+*/
+
+int modpow(int a, int m, int n)
+{
+    // Base cases
+    if (a == 0)
+        return 0;
+    if (m == 0)
+        return 1;
+
+    // If m is even
+    long y;
+    if (m % 2 == 0)
+    {
+        y = modpow(a, m / 2, n);
+        y = (y * y) % n;
+    }
+
+    // If m is odd
+    else
+    {
+        y = a % n;
+        y = (y * modpow(a, m - 1, n) % n) % n;
+    }
+    return ((y + n) % n);
 }
 
 int witness(long a, long b, long d, long p)
@@ -45,6 +75,7 @@ int witness(long a, long b, long d, long p)
 }
 long rand_long(long low, long up)
 {
+    srand(time(NULL));
     return rand() % (up - low + 1) + low;
 }
 

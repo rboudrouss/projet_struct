@@ -10,7 +10,7 @@ void print_long_vector(long *result, int size)
     printf(" Vector : [ ");
     for (int i = 0; i < size; i++)
     {
-        printf("%lx \t ", result[i]);
+        printf("%ld \t ", result[i]);
     }
     printf("] \n");
 }
@@ -48,7 +48,7 @@ int main()
     printf("cle privee = (%ld , %ld ) \n", u, n);
 
     // Chiffrement:
-    char mess[10] = "Hello";
+    char mess[100] = "j'aime le fromage uwu";
     print_str_as_int(mess);
     int len = strlen(mess);
     long *crypted = encrypt(mess, s, n);
