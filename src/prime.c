@@ -123,19 +123,15 @@ long random_prime_number(int low_size, int up_size, int k)
 
 long extended_gcd(long s, long t, long *u, long *v)
 {
-    printf("calling with parametters %ld %ld\n", s, t);
     if (s == 0)
     {
         *u = 0;
         *v = 1;
-        printf("returning1 %ld\n", t);
         return t;
     }
     long uPrim, vPrim;
     long gcd = extended_gcd(t % s, s, &uPrim, &vPrim);
-    printf("uwu nyah\n");
     *u = vPrim - (t / s) * uPrim;
     *v = uPrim;
-    printf("returning2 %ld\n", gcd);
     return gcd;
 }

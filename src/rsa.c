@@ -16,7 +16,7 @@ void generate_key_values(long p, long q, long *n, long *s, long *u)
 
 long *encrypt(char *chaine, long s, long n)
 {
-    size_t len = strlen(chaine);
+    size_t len = strlen(chaine) + 1;
     long *rep = malloc(sizeof(long) * len);
     for (int i = 0; i < len - 1; i++)
         rep[i] = modpow((long)chaine[i], s, n);
@@ -26,6 +26,7 @@ long *encrypt(char *chaine, long s, long n)
 
 char *decrypt(long *crypted, int size, long u, long n)
 {
+    size++;
     char *rep = malloc(size * sizeof(char));
     for (int i = 0; i < size - 1; i++)
         rep[i] = (char)modpow(crypted[i], u, n);

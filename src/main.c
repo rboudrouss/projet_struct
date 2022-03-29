@@ -28,10 +28,10 @@ int main()
     srand(time(NULL));
 
     // Generation de cle : $(OH)
-    long p = random_prime_number(3, 7, 5000);
-    long q = random_prime_number(3, 7, 5000);
+    long p = random_prime_number(8, 20, 5000);
+    long q = random_prime_number(8, 20, 5000);
     while (p == q)
-        q = random_prime_number(3, 7, 5000);
+        q = random_prime_number(8, 20, 5000);
     long n, s, u;
     generate_key_values(p, q, &n, &s, &u);
     // Pour avoir des cles positives :
