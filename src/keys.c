@@ -2,14 +2,7 @@
 #include <stdio.h>
 #include "rsa.h"
 #include "prime.h"
-
-#define STR_SIZE 50
-
-typedef struct _key
-{
-    long val;
-    long n;
-} Key;
+#include "keys.h"
 
 void init_key(Key *key, long val, long n)
 {
