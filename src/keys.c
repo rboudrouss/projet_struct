@@ -14,10 +14,10 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 {
 
     long n, s, u;
-    long p = random_prime_number(low_size, 20, 5000);
-    long q = random_prime_number(low_size, 20, 5000);
+    long p = random_prime_number(low_size, up_size, 5000);
+    long q = random_prime_number(low_size, up_size, 5000);
     while (p == q)
-        q = random_prime_number(low_size, 20, 5000);
+        q = random_prime_number(low_size, up_size, 5000);
     generate_key_values(p, q, &n, &s, &u);
 
     if (u < 0)
