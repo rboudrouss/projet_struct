@@ -20,6 +20,9 @@ main : $(OBJ)
 tests: $(OBJ)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
 
+uwu:
+	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
+
 $(BDIR)%.o: $(SDIR)%.c $(IDIR)%.h
 	$(CC) -c -o $@ $< $(CFLAGS)
 

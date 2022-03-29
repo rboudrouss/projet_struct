@@ -37,9 +37,5 @@ int main()
 
     printf("testing 'rsa.c' file");
 
-
-    char* s = "Nyah";
-        *s = rand_long(2, t);
-
     return 0;
 }
