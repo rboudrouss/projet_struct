@@ -9,12 +9,8 @@ OBJ = $(BDIR)rsa.o $(BDIR)prime.o
 HEA = $(IDIR)rsa.h $(IDIR)prime.h
 DEB=-ggdb -Wall
 
-all: $(OLC) $(OH)
-	make mainLC
-	make testLC
-	make mainH
-	make testH
-	make timer
+all: $(OBJ)
+	make main
 
 main : $(OBJ)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)

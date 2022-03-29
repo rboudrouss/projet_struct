@@ -28,7 +28,7 @@ char *decrypt(long *crypted, int size, long u, long n)
 {
     char *rep = malloc(size * sizeof(char));
     for (int i = 0; i < size - 1; i++)
-        rep[i] = modpow(crypted[i], u, n);
+        rep[i] = (char)modpow(crypted[i], u, n);
     rep[size - 1] = '\0';
     return rep;
 }

@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int is_prime_naive(long p)
 {
@@ -81,11 +82,11 @@ int is_prime_miller(long p, int k)
 
 long random_prime_number(int low_size, int up_size, int k)
 {
-    long low = 1 << low_size;
-    long high = (2 << up_size) - 1;
+    long low = 1 << (low_size - 1);
+    long high = (1 << up_size) - 1;
     long cand;
     int isprime = 0;
-    while (isprime)
+    while (!isprime)
     {
         cand = rand_long(low_size, up_size);
         isprime = is_prime_miller(cand, k);

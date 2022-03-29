@@ -15,15 +15,25 @@ void print_long_vector(long *result, int size)
     printf("] \n");
 }
 
+void print_str_as_int(char *s)
+{
+    printf("[ ");
+    for (; *s; s++)
+        printf("%d ", (int)*s);
+    printf("0 ]\n");
+}
+
 int main()
 {
     srand(time(NULL));
 
-    // Generation de cle :
+    // Generation de cle : $(OH)
     long p = random_prime_number(3, 7, 5000);
     long q = random_prime_number(3, 7, 5000);
+    printf("nyah %ld %ld \n", p, q);
     while (p == q)
         q = random_prime_number(3, 7, 5000);
+    printf("nyah\n");
     long n, s, u;
     generate_key_values(p, q, &n, &s, &u);
     // Pour avoir des cles positives :
@@ -34,11 +44,12 @@ int main()
     }
 
     // Afichage des cles en hexadecimal
-    printf("cle publique = (%lx , %lx ) \n", s, n);
-    printf("cle privee = (%lx , %lx ) \n", u, n);
+    printf("cle publique = (%ld , %ld ) \n", s, n);
+    printf("cle privee = (%ld , %ld ) \n", u, n);
 
     // Chiffrement:
-    char mess[10] = " H ell o ";
+    char mess[10] = "Hello";
+    print_str_as_int(mess);
     int len = strlen(mess);
     long *crypted = encrypt(mess, s, n);
 
