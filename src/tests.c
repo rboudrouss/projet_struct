@@ -13,7 +13,7 @@ int main()
 {
 
     // small primes
-    int small_p[SM] = {2, 3, 5, 7, 41, 89, 139, 197, 239, 331, 599, 701, 829, 1103, 3797, 4271};
+    int small_p[SM] = {2, 3, 5, 7, 41, 89, 139, 197, 239, 331, 599, 701, 829, 1103, 3797};
     // small composits
     int small_np[SM] = {1, 4, 6, 8, 9, 15, 21, 51, 221, 343, 413, 777, 973, 1547, 4477};
     // big primes
@@ -36,6 +36,10 @@ int main()
     assert(modpow(3797, 22, 33) == modpow_naive(3797, 22, 33));
 
     printf("testing 'rsa.c' file");
+
+
+    char* s = "Nyah";
+        *s = rand_long(2, t);
 
     return 0;
 }

@@ -30,10 +30,8 @@ int main()
     // Generation de cle : $(OH)
     long p = random_prime_number(3, 7, 5000);
     long q = random_prime_number(3, 7, 5000);
-    printf("nyah %ld %ld \n", p, q);
     while (p == q)
         q = random_prime_number(3, 7, 5000);
-    printf("nyah\n");
     long n, s, u;
     generate_key_values(p, q, &n, &s, &u);
     // Pour avoir des cles positives :

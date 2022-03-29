@@ -9,8 +9,10 @@ OBJ = $(BDIR)rsa.o $(BDIR)prime.o
 # HEA = $(IDIR)rsa.h $(IDIR)prime.h
 DEB=-ggdb -Wall
 
-all: $(OBJ)
-	make main
+all: main
+
+#% : $(OBJ)
+#	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
 
 main : $(OBJ)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)

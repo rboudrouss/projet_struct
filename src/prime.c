@@ -37,13 +37,11 @@ long modpow(long a, long m, long n)
 
 int modpow(int a, int m, int n)
 {
-    // Base cases
     if (a == 0)
         return 0;
     if (m == 0)
         return 1;
 
-    // If m is even
     long y;
     if (m % 2 == 0)
     {
@@ -51,7 +49,6 @@ int modpow(int a, int m, int n)
         y = (y * y) % n;
     }
 
-    // If m is odd
     else
     {
         y = a % n;
@@ -75,7 +72,6 @@ int witness(long a, long b, long d, long p)
 }
 long rand_long(long low, long up)
 {
-    srand(time(NULL));
     return rand() % (up - low + 1) + low;
 }
 
@@ -113,8 +109,8 @@ int is_prime_miller(long p, int k)
 
 long random_prime_number(int low_size, int up_size, int k)
 {
-    long low = 1 << (low_size - 1);
-    long high = (1 << up_size) - 1;
+    long low = 1 << (low_size);
+    long high = (2 << up_size) - 1;
     long cand;
     int isprime = 0;
     while (!isprime)
@@ -127,15 +123,19 @@ long random_prime_number(int low_size, int up_size, int k)
 
 long extended_gcd(long s, long t, long *u, long *v)
 {
+    printf("calling with parametters %ld %ld\n", s, t);
     if (s == 0)
     {
         *u = 0;
         *v = 1;
+        printf("returning1 %ld\n", t);
         return t;
     }
     long uPrim, vPrim;
     long gcd = extended_gcd(t % s, s, &uPrim, &vPrim);
+    printf("uwu nyah\n");
     *u = vPrim - (t / s) * uPrim;
     *v = uPrim;
+    printf("returning2 %ld\n", gcd);
     return gcd;
 }

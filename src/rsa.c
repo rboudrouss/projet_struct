@@ -6,11 +6,11 @@ void generate_key_values(long p, long q, long *n, long *s, long *u)
 {
     *n = p * q;
     long t = (p - 1) * (q - 1);
-    long *v, gcd;
+    long v, gcd;
     do
     {
         *s = rand_long(2, t);
-        gcd = extended_gcd(*s, t, u, v);
+        gcd = extended_gcd(*s, t, u, &v);
     } while (gcd != 1);
 }
 
