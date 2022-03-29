@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "prime.h"
 #include "rsa.h"
 
@@ -22,7 +25,7 @@ int main()
     while (p == q)
         q = random_prime_number(3, 7, 5000);
     long n, s, u;
-    generate_keys_values(p, q, &n, &s, &u);
+    generate_key_values(p, q, &n, &s, &u);
     // Pour avoir des cles positives :
     if (u < 0)
     {

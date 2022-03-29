@@ -1,14 +1,12 @@
 CC=gcc
 
 BDIR = ./bin/
-IDIR = ./head/
+IDIR = ./src/
 SDIR = ./src/
 
-CFLAGS=-I $(IDIR)
-DLC = $(IDIR)biblioLC.h $(IDIR)entreeSortieLC.h
-OLC = $(BDIR)biblioLC.o $(BDIR)entreeSortieLC.o
-DH = $(IDIR)biblioH.h $(IDIR)entreeSortieH.h
-OH =  $(BDIR)biblioH.o $(BDIR)entreeSortieH.o
+CFLAGS=-I $(IDIR) -lm
+OBJ = $(BDIR)rsa.o $(BDIR)prime.o
+HEA = $(IDIR)rsa.h $(IDIR)prime.h
 DEB=-ggdb -Wall
 
 all: $(OLC) $(OH)
@@ -18,18 +16,10 @@ all: $(OLC) $(OH)
 	make testH
 	make timer
 
-timer: $(OH) $(OLC)
-	make timerH
-	make timerLC
-
-%H: $(OH)
+main : $(OBJ)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
 
-%LC: $(OLC)
-	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
-
-
-$(BDIR)%.o: $(SDIR)%.c $(DLC) $(DH)
+$(BDIR)%.o: $(SDIR)%.c $(HEA)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:
