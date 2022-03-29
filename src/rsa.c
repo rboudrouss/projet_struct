@@ -1,0 +1,29 @@
+#include <string.h>
+#include <stdlib.h>
+#include "prime.h"
+
+void generate_key_values(long p, long q, long *n, long *s, long *u)
+{
+    *n = p * q;
+    long t = (p - 1) * (q - 1);
+    long cand_s, *v, gcd;
+    do
+    {
+        cand_s = rand_long(2, t);
+        gcd = extended_gcd(cand_s, t, u, v);
+    } while (gcd != 1);
+}
+
+long *encrypt(char *chaine, long s, long n)
+{
+    size_t len = strlen(chaine);
+    long *rep = malloc(sizeof(long) * len);
+    for (int i = 0; i < len - 1; i++)
+        rep[i] = modpow(chaine[i], s, n);
+    rep[len - 1] = '\0';
+    return rep;
+}
+
+char *decrypt(long *crypted, int size, long u, long n)
+{
+}
