@@ -1,7 +1,7 @@
 CC=gcc
 
 BDIR = ./bin/
-IDIR = ./src/
+IDIR = ./head/
 SDIR = ./src/
 
 CFLAGS=-I $(IDIR) -lm
