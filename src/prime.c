@@ -35,7 +35,7 @@ long modpow(long a, long m, long n)
 }
 */
 
-int modpow(int a, int m, int n)
+long modpow(long a, long m, long n)
 {
     if (a == 0)
         return 0;
