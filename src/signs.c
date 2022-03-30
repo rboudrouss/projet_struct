@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "rsa.h"
 #include "signs.h"
 #include "keys.h"
@@ -10,15 +11,14 @@ Signature *init_signature(long *content, int size)
     s->content = malloc(sizeof(long) * size);
     for (int i = 0; i < size; i++)
         s->content[i] = content[i];
+    s->size = size;
     return s;
 }
 
 Signature *sign(char *mess, Key *sKey)
 {
+    int size = strlen(mess);
     long *s = encrypt(mess, sKey->val, sKey->n);
-    int size;
-    for (size = 0; s[size]; size++)
-        ;
     Signature *rep = init_signature(s, size);
     free(s);
     return rep;
@@ -32,7 +32,7 @@ char *signature_to_str(Signature *sgn)
     char buffer[156];
     for (int i = 0; i < sgn->size; i++)
     {
-        sprintf(buffer, "%lx ", sgn->content[i]);
+        sprintf(buffer, "%lx", sgn->content[i]);
         for (int j = 0; j < strlen(buffer); j++)
         {
             result[pos] = buffer[j];
@@ -63,7 +63,7 @@ Signature *str_to_signature(char *str)
             if (pos != 0)
             {
                 buffer[pos] = '\0';
-                sscanf(buffer, "%lx ", &(content[num]));
+                sscanf(buffer, "%lx", &(content[num]));
                 num = num + 1;
                 pos = 0;
             }

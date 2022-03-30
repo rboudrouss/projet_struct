@@ -28,7 +28,7 @@ int verify(Protected *pr)
 char *protected_to_str(Protected *pr)
 {
     char *rep = malloc(STR_SIZE * sizeof(char));
-    fprintf(rep, "%s %s %s", key_to_str(pr->pKey), pr->mess, signature_to_str(pr->sgn));
+    sprintf(rep, "%s %s %s", key_to_str(pr->pKey), pr->mess, signature_to_str(pr->sgn));
     return rep;
 }
 

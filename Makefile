@@ -5,22 +5,14 @@ IDIR = ./head/
 SDIR = ./src/
 
 CFLAGS=-I $(IDIR) -lm
-OBJ = $(BDIR)rsa.o $(BDIR)prime.o
-# HEA = $(IDIR)rsa.h $(IDIR)prime.h
+OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o
 DEB=-ggdb -Wall
+
+TARGETS = main tests test
 
 all: main
 
-#% : $(OBJ)
-#	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
-
-main : $(OBJ)
-	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
-
-tests: $(OBJ)
-	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
-
-uwu:
+$(TARGETS): $(OBJ)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
 
 $(BDIR)%.o: $(SDIR)%.c $(IDIR)%.h
