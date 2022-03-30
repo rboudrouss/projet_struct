@@ -1,4 +1,4 @@
-#define STR_SIZE 50
+#define STR_SIZE 256
 
 typedef struct _key
 {
