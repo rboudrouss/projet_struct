@@ -15,6 +15,14 @@ Protected *init_protected(Key *pKey, char *mess, Signature *sgn)
     return rep;
 }
 
+void free_protected(Protected *p)
+{
+    free_signature(p->sgn);
+    free_key(p->pKey);
+    free(p->mess);
+    free(p);
+}
+
 int verify(Protected *pr)
 {
     if (strlen(pr->mess) != pr->sgn->size)

@@ -15,6 +15,12 @@ Signature *init_signature(long *content, int size)
     return s;
 }
 
+void free_signature(Signature *sign)
+{
+    free(sign->content);
+    free(sign);
+}
+
 Signature *sign(char *mess, Key *sKey)
 {
     int size = strlen(mess);
@@ -59,14 +65,13 @@ Signature *str_to_signature(char *str)
             buffer[pos] = str[i];
             pos = pos + 1;
         }
-        else
-            if (pos != 0)
-            {
-                buffer[pos] = '\0';
-                sscanf(buffer, "%lx", &(content[num]));
-                num = num + 1;
-                pos = 0;
-            }
+        else if (pos != 0)
+        {
+            buffer[pos] = '\0';
+            sscanf(buffer, "%lx", &(content[num]));
+            num = num + 1;
+            pos = 0;
+        }
     content = realloc(content, num * sizeof(long));
     return init_signature(content, num);
 }

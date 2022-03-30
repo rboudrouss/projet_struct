@@ -10,6 +10,11 @@ void init_key(Key *key, long val, long n)
     key->n = n;
 }
 
+void free_key(Key *key)
+{
+    free(key);
+}
+
 void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 {
 
@@ -23,24 +28,24 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
     if (u < 0)
     {
         long t = (p - 1) * (q - 1);
-        u = u + t; 
+        u = u + t;
     }
     pKey->n = sKey->n = n;
     pKey->val = s;
     sKey->val = u;
 }
 
-char* key_to_str(Key* key)
+char *key_to_str(Key *key)
 {
-    char* rep = malloc(STR_SIZE*sizeof(char));
+    char *rep = malloc(STR_SIZE * sizeof(char));
     sprintf(rep, "(%lx,%lx)", key->val, key->n);
     return rep;
 }
 
-Key* str_to_key(char* str)
+Key *str_to_key(char *str)
 {
-    Key* k = malloc(sizeof(Key));
-    long val,n;
+    Key *k = malloc(sizeof(Key));
+    long val, n;
     sscanf(str, "(%lx,%lx)", &val, &n);
     k->val = val;
     k->n = n;
