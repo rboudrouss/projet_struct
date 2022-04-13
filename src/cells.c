@@ -3,7 +3,6 @@
 #include "keys.h"
 #include "cells.h"
 
-
 // CellKey
 
 CellKey *create_cell_key(Key *key)
@@ -14,7 +13,9 @@ CellKey *create_cell_key(Key *key)
     return rep;
 }
 
-CellKey* read_public_keys(char* name){
+CellKey *read_public_keys(char *name)
+{
+    // reads public key from file
     // TODO
 }
 
@@ -54,26 +55,26 @@ void delete_list_keys(CellKey *c)
 
 // CellProtected
 
-CellProtected* create_cell_protected(Protected* pr)
+CellProtected *create_cell_protected(Protected *pr)
 {
-    CellProtected* rep = malloc(sizeof(CellProtected));
+    CellProtected *rep = malloc(sizeof(CellProtected));
     rep->data = pr;
     rep->next = NULL;
     return rep;
 }
 
-void add_cell_protected(CellProtected** c, Protected* p)
+void add_cell_protected(CellProtected **c, Protected *p)
 {
-    CellProtected* rep = create_cell_protected(p);
+    CellProtected *rep = create_cell_protected(p);
     rep->next = *c;
     *c = rep;
 }
 
-CellProtected* read_protected(char* name)
+CellProtected *read_protected(char *name)
 {
+    // reads signature key from file
     // TODO
 }
-
 
 void print_list_protected(CellProtected *l)
 {
@@ -83,12 +84,11 @@ void print_list_protected(CellProtected *l)
     printf("]\n");
 }
 
-void delete_cell_protected(CellProtected* c)
+void delete_cell_protected(CellProtected *c)
 {
     free_protected(c->data);
     free(c);
 }
-
 
 void delete_list_protected(CellProtected *c)
 {
@@ -102,3 +102,33 @@ void delete_list_protected(CellProtected *c)
         c = temp;
     } while (c);
 }
+
+void delete_non_valid(CellProtected **c)
+{
+    if (!*c)
+        return NULL;
+
+    CellProtected *temp = *c, *suiv;
+    int verified = verify(temp->data);
+
+    while (!verified)
+    {
+        temp = temp->next;
+        (*c);
+        c = &temp;
+        verified = verify(temp->data);
+    }
+
+    while (temp->next)
+    {
+        if (!verify(temp->next))
+        {
+            suiv = temp->next->next;
+            delete_cell_protected(temp->next);
+            temp->next = suiv;
+        }
+        else
+            temp = temp->next;
+    }
+}
+
