@@ -79,8 +79,12 @@ CellProtected *read_protected(char *name)
 void print_list_protected(CellProtected *l)
 {
     printf("[ ");
-    for (; l; l = l->next)
-        printf("%s ", protected_to_str(l->data));
+    char *s;
+    for (; l; l = l->next){
+        s = protected_to_str(l->data);
+        printf("%s ",s);
+        free(s);
+    }
     printf("]\n");
 }
 
@@ -94,7 +98,9 @@ void delete_list_protected(CellProtected *c)
 {
     if (!c)
         return;
+
     CellKey *temp;
+
     do
     {
         temp = c->next;
