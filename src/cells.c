@@ -106,7 +106,7 @@ void delete_list_protected(CellProtected *c)
 void delete_non_valid(CellProtected **c)
 {
     if (!*c)
-        return NULL;
+        return;
 
     CellProtected *temp = *c, *suiv;
     int verified = verify(temp->data);
@@ -132,3 +132,120 @@ void delete_non_valid(CellProtected **c)
     }
 }
 
+HashCell *create_hashcell(Key *key)
+{
+    HashCell *rep = malloc(sizeof(HashCell));
+    rep->key = key;
+    rep->val = 0;
+    return rep;
+}
+
+int hash_function(Key *key, int size)
+{
+    if (!key)
+    {
+        printf("no key specified for hash_fucntion\n");
+        return;
+    }
+    return (key->n + key->val) % size;
+}
+
+int find_position(HashTable *t, Key *key)
+{
+    if (!(t && key))
+        return;
+    HashCell **tab = t->tab;
+    int hash = hash_function(key, t->size);
+    for (; tab[hash] && !key_cmp(tab[hash]->key, key); hash = (hash + 1) % t->size)
+        ;
+    return hash;
+}
+
+void insert_key_table(HashTable *t, Key *key)
+{
+    HashCell *c = create_hashcell(key);
+    int pos = find_position(t, key);
+    t->tab[pos] = c;
+}
+
+HashCell *get_cell_table(HashTable *t, Key *key)
+{
+    return t->tab[find_position(t, key)];
+}
+
+HashTable *create_hashtable(CellKey *keys, int size)
+{
+    HashTable *rep = malloc(sizeof(HashTable));
+    rep->size = size;
+    rep->tab = malloc(sizeof(sizeof(CellKey *) * size));
+
+    for (int i = 0; i < size; rep->tab[i++] = NULL)
+        ;
+
+    for (; keys; keys = keys->next)
+        insert_key_table(rep, keys->data);
+
+    return rep;
+}
+
+void delete_hashtable(HashTable *t)
+{
+    free(t->tab);
+    free(t);
+}
+
+Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
+{
+    HashTable *HC = create_hashtable(candidates, sizeC);
+    HashTable *HV = create_hashtable(voters, sizeV);
+
+    Protected *p;
+    HashCell *c;
+    Key *keyc;
+    int nb_vote = -1;
+
+    for (; decl; decl = decl->next)
+    {
+        p = decl->data;
+        c = get_cell_table(HV, decl->data->pKey);
+
+        if (!c)
+        {
+            printf("Warning : Candidate not found in compute winner\n");
+            continue;
+        }
+
+        if (c->val == 1)
+        {
+            printf("Warning : candidate has already voted, there might be a duplicate in the array\n");
+            continue;
+        }
+
+        keyc = str_to_key(decl->data->mess);
+        c = get_cell_table(HC, keyc);
+
+        if (!c)
+        {
+            printf("Warning : Signature to an non-existing candidate\n");
+            free_key(keyc);
+            keyc = NULL;
+            continue;
+        }
+
+        c->val++;
+        free_key(keyc);
+        keyc = NULL;
+    }
+
+    for (int i = 0; i < sizeC; i++)
+    {
+        if (!HC->tab[i])
+            continue;
+        if (HC->tab[i]->val > nb_vote)
+        {
+            nb_vote = HC->tab[i]->val;
+            keyc = HC->tab[i]->key;
+        }
+    }
+    return keyc;
+}

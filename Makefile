@@ -6,7 +6,7 @@ SDIR = ./src/
 RDIR = ./report/
 
 CFLAGS=-I $(IDIR) -lm
-OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o
+OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o $(BDIR)cells.o
 DEB=-ggdb -Wall
 
 TARGETS = main tests test

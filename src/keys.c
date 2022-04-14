@@ -15,6 +15,12 @@ void free_key(Key *key)
     free(key);
 }
 
+// 1 if same else 0
+int key_cmp(Key* k1, Key* k2)
+{
+    return k1->n == k2->n && k1->val == k2->val;
+}
+
 void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 {
 
