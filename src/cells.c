@@ -100,7 +100,7 @@ void delete_list_protected(CellProtected *c)
     if (!c)
         return;
 
-    CellKey *temp;
+    CellProtected *temp;
 
     do
     {
@@ -128,7 +128,7 @@ void delete_non_valid(CellProtected **c)
 
     while (temp->next)
     {
-        if (!verify(temp->next))
+        if (!verify(temp->next->data))
         {
             suiv = temp->next->next;
             delete_cell_protected(temp->next);
@@ -151,16 +151,18 @@ int hash_function(Key *key, int size)
 {
     if (!key)
     {
-        printf("no key specified for hash_fucntion\n");
-        return;
+        printf("Error : no key specified for hash_fucntion\n");
+        return 0;
     }
     return (key->n + key->val) % size;
 }
 
 int find_position(HashTable *t, Key *key)
 {
-    if (!(t && key))
-        return;
+    if (!(t && key)){
+        printf("Error : no table or key specified of find_postion function\n");
+        return 0;
+    }
     HashCell **tab = t->tab;
     int hash = hash_function(key, t->size);
     for (; tab[hash] && !key_cmp(tab[hash]->key, key); hash = (hash + 1) % t->size)
