@@ -256,5 +256,7 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
             keyc = HC->tab[i]->key;
         }
     }
+    delete_hashtable(HC);
+    delete_hashtable(HV);
     return keyc;
 }
