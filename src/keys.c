@@ -16,7 +16,7 @@ void free_key(Key *key)
 }
 
 // 1 if same else 0
-int key_cmp(Key* k1, Key* k2)
+int key_cmp(Key *k1, Key *k2)
 {
     return k1->n == k2->n && k1->val == k2->val;
 }

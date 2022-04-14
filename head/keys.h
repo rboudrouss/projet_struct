@@ -11,9 +11,9 @@ typedef struct _key
 
 void init_key(Key *key, long val, long n);
 void free_key(Key *key);
-int key_cmp(Key* k1, Key* k2);
+int key_cmp(Key *k1, Key *k2);
 void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size);
-char* key_to_str(Key* key);
-Key* str_to_key(char* str);
+char *key_to_str(Key *key);
+Key *str_to_key(char *str);
 
 #endif

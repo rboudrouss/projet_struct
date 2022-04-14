@@ -7,29 +7,28 @@
 // liste chainé key
 typedef struct cellKey
 {
-    Key* data;
-    struct cellKey* next;
+    Key *data;
+    struct cellKey *next;
 } CellKey;
 
 // liste chainé signature
 typedef struct cellProtected
 {
-    Protected* data;
-    struct cellProtected* next;
+    Protected *data;
+    struct cellProtected *next;
 } CellProtected;
 
 // hash table
 typedef struct hashcell
 {
-    Key* key;
+    Key *key;
     int val;
 } HashCell;
 
 typedef struct hastable
 {
-    HashCell** tab;
+    HashCell **tab;
     int size;
 } HashTable;
-
 
 #endif

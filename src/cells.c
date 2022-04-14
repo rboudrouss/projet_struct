@@ -80,9 +80,10 @@ void print_list_protected(CellProtected *l)
 {
     printf("[ ");
     char *s;
-    for (; l; l = l->next){
+    for (; l; l = l->next)
+    {
         s = protected_to_str(l->data);
-        printf("%s ",s);
+        printf("%s ", s);
         free(s);
     }
     printf("]\n");

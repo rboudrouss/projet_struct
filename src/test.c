@@ -46,7 +46,7 @@ int main(void)
     print_long_vector(sgn->content, sgn->size);
 
     free(chaine);
-    
+
     chaine = signature_to_str(sgn);
     printf("signaturetostr: %s \n", chaine);
     free(sgn->content);
@@ -70,7 +70,7 @@ int main(void)
     printf("protectedtostr: %s \n", chaine);
     pr = str_to_protected(chaine);
     printf("strtoprotected: %s %s %s \n", key_to_str(pr->pKey), pr->mess,
-        signature_to_str(pr->sgn));
+           signature_to_str(pr->sgn));
 
     free(pKey);
     free(sKey);
