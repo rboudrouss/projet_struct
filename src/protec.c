@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "rsa.h"
-#include "signs.h"
-#include "keys.h"
 #include "protec.h"
 
 Protected *init_protected(Key *pKey, char *mess, Signature *sgn)

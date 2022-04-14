@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "keys.h"
-#include "signs.h"
 #include "protec.h"
 void print_long_vector(long *result, int size)
 {

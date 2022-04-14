@@ -3,7 +3,6 @@
 #include <string.h>
 #include "rsa.h"
 #include "signs.h"
-#include "keys.h"
 
 Signature *init_signature(long *content, int size)
 {
