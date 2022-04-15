@@ -6,6 +6,8 @@
         "keys.h": "c",
         "rsa.h": "c",
         "signs.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "block.h": "c",
+        "cells.h": "c"
     }
 }

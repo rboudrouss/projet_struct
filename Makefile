@@ -5,8 +5,8 @@ IDIR = ./head/
 SDIR = ./src/
 RDIR = ./report/
 
-CFLAGS=-I $(IDIR) -lm
-OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o $(BDIR)cells.o
+CFLAGS=-I $(IDIR) -lm -lssl -lcrypto
+OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o $(BDIR)cells.o $(BDIR)block.h
 DEB=-ggdb -Wall
 
 TARGETS = main tests test

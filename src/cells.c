@@ -105,6 +105,21 @@ void delete_list_protected(CellProtected *c)
     do
     {
         temp = c->next;
+        free(c);
+        c = temp;
+    } while (c);
+}
+
+void delete_only_list_protected(CellProtected *c)
+{
+    if (!c)
+        return;
+
+    CellProtected *temp;
+
+    do
+    {
+        temp = c->next;
         delete_cell_protected(c);
         c = temp;
     } while (c);
