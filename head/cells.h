@@ -45,6 +45,7 @@ CellProtected *read_protected(char *name);
 void print_list_protected(CellProtected *l);
 void delete_cell_protected(CellProtected *c);
 void delete_list_protected(CellProtected *c);
+void fusion_protected(CellProtected* p1, CellProtected* p2);
 void delete_only_list_protected(CellProtected *c);
 void delete_non_valid(CellProtected **c);
 

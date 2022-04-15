@@ -154,6 +154,14 @@ void delete_non_valid(CellProtected **c)
     }
 }
 
+void fusion_protected(CellProtected* p1, CellProtected* p2)
+{
+    for(;p1;p1=p1->next);
+    p1->next = p2;
+}
+
+// hashtab
+
 HashCell *create_hashcell(Key *key)
 {
     HashCell *rep = malloc(sizeof(HashCell));
