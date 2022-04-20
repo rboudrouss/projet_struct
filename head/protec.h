@@ -1,4 +1,5 @@
 #include "signs.h"
+#include "files.h"
 
 #ifndef __PRT__
 #define __PRT__
@@ -15,5 +16,6 @@ void free_protected(Protected *p);
 int verify(Protected *pr);
 char *protected_to_str(Protected *pr);
 Protected *str_to_protected(char *str);
+void submit_vote(Protected* p);
 
 #endif

@@ -47,3 +47,13 @@ Protected *str_to_protected(char *str)
         mess,
         str_to_signature(sign));
 }
+
+void submit_vote(Protected* p)
+{
+    FILE* f = fopen(PENDV, "a+");
+    char *vote = protected_to_str(p);
+    fputs(vote,f);
+    fputc('\n',f);
+    free(vote);
+    fclose(f);
+}

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "btree.h"
+#include "files.h"
 
 CellTree *create_node(Block *b)
 {
@@ -23,7 +24,7 @@ void add_child(CellTree *father, CellTree *child)
 {
     father->firstChild = child;
 
-    for(;father->father;father = father->father)
+    for (; father->father; father = father->father)
         update_height(father->father, father);
 }
 
@@ -57,20 +58,46 @@ void delete_tree(CellTree *tree)
 
 CellTree *highest_child(CellTree *cell)
 {
-    // FIXME ?
-    if (!(cell && cell->firstChild))
-        return cell;
-    return highest_child(cell->firstChild);
+    CellTree *highest, *current = cell;
+    int max = -1;
+    for (; current; current = current->nextBro)
+        if (current->height > max)
+        {
+            highest = current;
+            max = current->height;
+        }
+    return highest;
 }
 
 CellTree *last_node(CellTree *tree)
 {
     CellTree *cell = highest_child(tree);
-    if (!(cell && cell->nextBro))
+    if (!(cell && cell->firstChild))
         return cell;
-    for (; cell->nextBro; cell = cell->nextBro)
+    for (; cell->firstChild; cell = cell->firstChild)
         ;
     return cell;
 }
 
-//TODO q8.9
+CellProtected *fusion_blocks(CellTree *tree)
+{
+    CellTree *cell = highest_child(tree);
+    CellProtected *rep = NULL;
+    for (; cell; cell = cell->firstChild)
+        fusion_protected(rep, cell->block->votes);
+    return rep;
+}
+
+void create_block(CellTree *tree, Key *author, int d)
+{
+    CellProtected *pl = read_protected(PENDV);
+    Block* b = malloc(sizeof(Block));
+    b->author = author;
+    b->previous_hash = last_node(tree)->block->hash;
+    compute_proof_of_work(b,d);
+    FILE* f = fopen(PENDB, "w");
+    char* str = block_to_str(b);
+    fputs(str,f);
+    fclose(f);
+    delete_
+}

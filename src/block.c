@@ -14,6 +14,7 @@ Block *read_block(char *name)
 
 char *block_to_str(Block *block)
 {
+    // FIXME hmm faudrait print toutes les clés aussi
     char *key = key_to_str(block->author);
     char *vote = protected_to_str(block->votes->data);
     char *rep = malloc(STR_SIZE * sizeof(char));
@@ -80,4 +81,11 @@ void delete_block(Block* b)
     free(b->hash);
     free(b->previous_hash);
     delete_only_list_protected(b->votes);
+}
+
+void delete_all_block(Block* b)
+{
+    free(b->hash);
+    free(b->previous_hash);
+    delete_list_protected(b->votes);
 }

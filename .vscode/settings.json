@@ -8,6 +8,7 @@
         "signs.h": "c",
         "string.h": "c",
         "block.h": "c",
-        "cells.h": "c"
+        "cells.h": "c",
+        "files.h": "c"
     }
 }

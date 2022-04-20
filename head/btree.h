@@ -20,4 +20,6 @@ void delete_node(CellTree *node);
 void delete_tree(CellTree *tree);
 CellTree *highest_child(CellTree *cell);
 CellTree *last_node(CellTree *tree);
+CellProtected *fusion_blocks(CellTree *tree);
+void create_block(CellTree* tree, Key* author, int d);
 #endif

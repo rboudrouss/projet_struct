@@ -15,8 +15,19 @@ CellKey *create_cell_key(Key *key)
 
 CellKey *read_public_keys(char *name)
 {
-    // reads public key from file
-    // TODO
+    FILE *f = fopen(PENDV, "r");
+    char buffer[STR_SIZE];
+    Key *k = NULL;
+    CellKey *kl = create_cell_key(k);
+    do
+    {
+        fgets(buffer, sizeof(buffer), f);
+        k = str_to_key(buffer);
+        add_cell_key(&kl, k);
+    } while (*buffer != EOF);
+    fclose(f);
+    free(buffer);
+    return kl;
 }
 
 void add_cell_key(CellKey **l, Key *k)
@@ -72,8 +83,19 @@ void add_cell_protected(CellProtected **c, Protected *p)
 
 CellProtected *read_protected(char *name)
 {
-    // reads signature key from file
-    // TODO
+    FILE *f = fopen(PENDV, "r");
+    char buffer[STR_SIZE];
+    Protected *p = NULL;
+    CellProtected *pl = create_cell_protected(p);
+    do
+    {
+        fgets(buffer, sizeof(buffer), f);
+        p = str_to_protected(buffer);
+        add_cell_protected(&pl, p);
+    } while (*buffer != EOF);
+    fclose(f);
+    free(buffer);
+    return pl;
 }
 
 void print_list_protected(CellProtected *l)
@@ -154,9 +176,15 @@ void delete_non_valid(CellProtected **c)
     }
 }
 
-void fusion_protected(CellProtected* p1, CellProtected* p2)
+void fusion_protected(CellProtected *p1, CellProtected *p2)
 {
-    for(;p1;p1=p1->next);
+    // TODO ? maybe clone array
+    if (!p1)
+        return p2;
+    if (!p2)
+        return p1;
+    for (; p1->next; p1 = p1->next)
+        ;
     p1->next = p2;
 }
 
@@ -182,7 +210,8 @@ int hash_function(Key *key, int size)
 
 int find_position(HashTable *t, Key *key)
 {
-    if (!(t && key)){
+    if (!(t && key))
+    {
         printf("Error : no table or key specified of find_postion function\n");
         return 0;
     }
