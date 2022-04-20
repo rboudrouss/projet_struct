@@ -26,7 +26,6 @@ CellKey *read_public_keys(char *name)
         add_cell_key(&kl, k);
     } while (*buffer != EOF);
     fclose(f);
-    free(buffer);
     return kl;
 }
 
@@ -94,7 +93,6 @@ CellProtected *read_protected(char *name)
         add_cell_protected(&pl, p);
     } while (*buffer != EOF);
     fclose(f);
-    free(buffer);
     return pl;
 }
 
@@ -179,10 +177,8 @@ void delete_non_valid(CellProtected **c)
 void fusion_protected(CellProtected *p1, CellProtected *p2)
 {
     // TODO ? maybe clone array
-    if (!p1)
-        return p2;
-    if (!p2)
-        return p1;
+    if (!(p1 && p2))
+        return;
     for (; p1->next; p1 = p1->next)
         ;
     p1->next = p2;
