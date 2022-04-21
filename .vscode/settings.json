@@ -9,6 +9,21 @@
         "string.h": "c",
         "block.h": "c",
         "cells.h": "c",
-        "files.h": "c"
+        "files.h": "c",
+        "*.tcc": "c",
+        "random": "c",
+        "limits": "c",
+        "type_traits": "c",
+        "hash_map": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "memory": "c",
+        "optional": "c",
+        "string_view": "c",
+        "system_error": "c",
+        "variant": "c",
+        "generate.h": "c",
+        "stdlib.h": "c"
     }
 }
