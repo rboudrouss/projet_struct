@@ -7,6 +7,12 @@
 Signature *init_signature(long *content, int size)
 {
     Signature *s = malloc(sizeof(Signature));
+    if (size==0 || !content)
+    {
+        s->size = 0;
+        s->content = NULL;
+        return s;
+    }
     s->content = malloc(sizeof(long) * size);
     for (int i = 0; i < size; i++)
         s->content[i] = content[i];

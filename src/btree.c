@@ -99,5 +99,5 @@ void create_block(CellTree *tree, Key *author, int d)
     char* str = block_to_str(b);
     fputs(str,f);
     fclose(f);
-    // TODO
+    // TODO finish function
 }

@@ -33,6 +33,7 @@ typedef struct hastable
 // CellKey
 CellKey *create_cell_key(Key *key);
 CellKey *read_public_keys(char *name);
+CellKey *read_public_keys_fromp(char *name);
 void add_cell_key(CellKey **l, Key *k);
 void print_list_keys(CellKey *LCK);
 void delete_cell_key(CellKey *c);

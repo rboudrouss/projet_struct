@@ -115,7 +115,7 @@ long random_prime_number(int low_size, int up_size, int k)
     int isprime = 0;
     while (!isprime)
     {
-        cand = rand_long(low_size, up_size);
+        cand = rand_long(low_size, up_size); // FIXME OULAAA faut changer ça mais ça va tout casser (low_size en low)
         isprime = is_prime_miller(cand, k);
     }
     return cand;

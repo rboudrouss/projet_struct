@@ -13,20 +13,39 @@ CellKey *create_cell_key(Key *key)
     return rep;
 }
 
-CellKey *read_public_keys(char *name)
+// read from pair of public & private key
+CellKey *read_public_keys_fromp(char *name)
 {
-    FILE *f = fopen(PENDV, "r");
-    char buffer[STR_SIZE];
-    Key *k = NULL;
+    FILE *f = fopen(name, "r");
+    char buffer1[STR_SIZE], buffer2[STR_SIZE];
+    fscanf(f, "%s %s\n", buffer1, buffer2);
+    Key *k = str_to_key(buffer1);
     CellKey *kl = create_cell_key(k);
-    do
+    while (!feof(f))
     {
-        fgets(buffer, sizeof(buffer), f);
-        k = str_to_key(buffer);
+        fscanf(f, "%s %s\n", buffer1, buffer2);
+        k = str_to_key(buffer1);
         add_cell_key(&kl, k);
-    } while (*buffer != EOF);
+    };
     fclose(f);
     return kl;
+}
+
+CellKey *read_public_keys(char *name)
+{
+    FILE *f = fopen(name, "r");
+    char buffer[STR_SIZE];
+    fgets(buffer, sizeof(buffer), f);
+    Key *p = str_to_key(buffer);
+    CellKey *pl = create_cell_key(p);
+    while (!feof(f))
+    {
+        fgets(buffer, sizeof(buffer), f);
+        p = str_to_key(buffer);
+        add_cell_key(&pl, p);
+    }
+    fclose(f);
+    return pl;
 }
 
 void add_cell_key(CellKey **l, Key *k)
@@ -39,9 +58,19 @@ void add_cell_key(CellKey **l, Key *k)
 void print_list_keys(CellKey *LCK)
 {
     printf("[ ");
+    char *s;
     for (; LCK; LCK = LCK->next)
-        printf("%s ", key_to_str(LCK->data));
-    printf("]\n");
+    {
+        if (LCK->data)
+        {
+            s = key_to_str(LCK->data);
+            printf("%s ", s);
+            free(s);
+        }
+        else
+            printf("END");
+    }
+    printf(" ]\n");
 }
 
 void delete_cell_key(CellKey *c)
@@ -82,16 +111,17 @@ void add_cell_protected(CellProtected **c, Protected *p)
 
 CellProtected *read_protected(char *name)
 {
-    FILE *f = fopen(PENDV, "r");
+    FILE *f = fopen(name, "r");
     char buffer[STR_SIZE];
-    Protected *p = NULL;
+    fgets(buffer, sizeof(buffer), f);
+    Protected *p = str_to_protected(buffer);
     CellProtected *pl = create_cell_protected(p);
-    do
+    while (!feof(f))
     {
         fgets(buffer, sizeof(buffer), f);
         p = str_to_protected(buffer);
         add_cell_protected(&pl, p);
-    } while (*buffer != EOF);
+    }
     fclose(f);
     return pl;
 }
@@ -102,11 +132,16 @@ void print_list_protected(CellProtected *l)
     char *s;
     for (; l; l = l->next)
     {
-        s = protected_to_str(l->data);
-        printf("%s ", s);
-        free(s);
+        if (l->data)
+        {
+            s = protected_to_str(l->data);
+            printf("%s ", s);
+            free(s);
+        }
+        else
+            printf("END");
     }
-    printf("]\n");
+    printf(" ]\n");
 }
 
 void delete_cell_protected(CellProtected *c)
@@ -156,7 +191,7 @@ void delete_non_valid(CellProtected **c)
     while (!verified)
     {
         temp = temp->next;
-        (*c);
+        (*c); // TODO ?
         c = &temp;
         verified = verify(temp->data);
     }
@@ -206,9 +241,14 @@ int hash_function(Key *key, int size)
 
 int find_position(HashTable *t, Key *key)
 {
-    if (!(t && key))
+    if (!t)
     {
-        printf("Error : no table or key specified of find_postion function\n");
+        printf("Error : no table specified of find_postion function\n");
+        return 0;
+    }
+    if (!key)
+    {
+        printf("Error : no key specified of find_postion function\n");
         return 0;
     }
     HashCell **tab = t->tab;
@@ -227,6 +267,11 @@ void insert_key_table(HashTable *t, Key *key)
 
 HashCell *get_cell_table(HashTable *t, Key *key)
 {
+    if (!key)
+    {
+        printf("Error : got empty key in get_cell_table\n");
+        return NULL;
+    }
     return t->tab[find_position(t, key)];
 }
 
@@ -234,10 +279,10 @@ HashTable *create_hashtable(CellKey *keys, int size)
 {
     HashTable *rep = malloc(sizeof(HashTable));
     rep->size = size;
-    rep->tab = malloc(sizeof(sizeof(CellKey *) * size));
+    rep->tab = malloc(sizeof(CellKey *) * size);
 
-    for (int i = 0; i < size; rep->tab[i++] = NULL)
-        ;
+    for (int i = 0; i < size; i++)
+        rep->tab[i] = NULL;
 
     for (; keys; keys = keys->next)
         insert_key_table(rep, keys->data);
@@ -253,17 +298,15 @@ void delete_hashtable(HashTable *t)
 
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
 {
-    HashTable *HC = create_hashtable(candidates, sizeC);
-    HashTable *HV = create_hashtable(voters, sizeV);
+    HashTable *HC = create_hashtable(candidates, sizeC * 2);
+    HashTable *HV = create_hashtable(voters, sizeV * 2);
 
-    Protected *p;
     HashCell *c;
     Key *keyc;
     int nb_vote = -1;
 
     for (; decl; decl = decl->next)
     {
-        p = decl->data;
         c = get_cell_table(HV, decl->data->pKey);
 
         if (!c)
@@ -277,13 +320,14 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
             printf("Warning : candidate has already voted, there might be a duplicate in the array\n");
             continue;
         }
+        c->val = 1;
 
         keyc = str_to_key(decl->data->mess);
         c = get_cell_table(HC, keyc);
 
         if (!c)
         {
-            printf("Warning : Signature to an non-existing candidate\n");
+            printf("Warning : Signature to an non-existing candidate, mess = %s\n", decl->data->mess);
             free_key(keyc);
             keyc = NULL;
             continue;
