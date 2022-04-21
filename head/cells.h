@@ -46,7 +46,7 @@ CellProtected *read_protected(char *name);
 void print_list_protected(CellProtected *l);
 void delete_cell_protected(CellProtected *c);
 void delete_list_protected(CellProtected *c);
-void fusion_protected(CellProtected* p1, CellProtected* p2);
+void fusion_protected(CellProtected *p1, CellProtected *p2);
 void delete_only_list_protected(CellProtected *c);
 void delete_non_valid(CellProtected **c);
 
@@ -59,5 +59,6 @@ HashCell *get_cell_table(HashTable *t, Key *key);
 HashTable *create_hashtable(CellKey *keys, int size);
 void delete_hashtable(HashTable *t);
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV);
+// TODO function print hashtable
 
 #endif

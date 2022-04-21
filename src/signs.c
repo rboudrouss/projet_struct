@@ -7,7 +7,7 @@
 Signature *init_signature(long *content, int size)
 {
     Signature *s = malloc(sizeof(Signature));
-    if (size==0 || !content)
+    if (size == 0 || !content)
     {
         s->size = 0;
         s->content = NULL;
@@ -59,6 +59,8 @@ char *signature_to_str(Signature *sgn)
 
 Signature *str_to_signature(char *str)
 {
+    if (!str)
+        return NULL;
     int len = strlen(str);
     long *content = (long *)malloc(sizeof(long) * len);
     int num = 0;

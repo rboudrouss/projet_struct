@@ -31,6 +31,7 @@ CellKey *read_public_keys_fromp(char *name)
     return kl;
 }
 
+// FIXME duplicate candidant (?)
 CellKey *read_public_keys(char *name)
 {
     FILE *f = fopen(name, "r");
@@ -152,6 +153,7 @@ void delete_cell_protected(CellProtected *c)
 
 void delete_list_protected(CellProtected *c)
 {
+    // FIXME wtf la différence entre les deux fonctions là ?
     if (!c)
         return;
 
@@ -348,6 +350,7 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
             keyc = HC->tab[i]->key;
         }
     }
+    printf("Le gagnant remport l'élection avec %d voix !\n", nb_vote);
     delete_hashtable(HC);
     delete_hashtable(HV);
     return keyc;

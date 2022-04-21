@@ -74,16 +74,15 @@ Block *read_block(char *filename)
     // Reading votes
     char pr_str[128], temp1[128], temp2[128];
     Protected *pr;
-    CellProtected *cpr, *liste = NULL;
+    CellProtected *liste = NULL;
     while (!feof(f))
     {
         fscanf(f, "%s %s %s\n", pr_str, temp1, temp2);
         strcat(strcat(strcat(strcat(pr_str, " "), temp1), " "), temp2);
 
         pr = str_to_protected(pr_str);
-        cpr = create_cell_protected(pr);
 
-        add_cell_protected(&liste, cpr);
+        add_cell_protected(&liste, pr);
     }
 
     fclose(f);
@@ -95,6 +94,8 @@ Block *read_block(char *filename)
 
 char *block_to_str(Block *block)
 {
+    if (!block)
+        return NULL;
     char *key = key_to_str(block->author);
     char *vote = protected_to_str(block->votes->data);
     char *rep = malloc(STR_SIZE * sizeof(char));
@@ -104,10 +105,15 @@ char *block_to_str(Block *block)
     return rep;
 }
 
-unsigned char *hash(char *s, int nonce)
+unsigned char *hashf(char *s, int nonce)
 {
-    // TODO très gros soucis ici avec le nonce, j'ai peut-être rien compris
-    return SHA256((unsigned char *)s, strlen(s), nonce);
+    char *sa = strdup(s);
+    char strn[STR_SIZE];
+    sprintf(strn, "%x", nonce);
+    unsigned char *final = (unsigned char *)strcat(sa, strn);
+    char *rep = (char *)SHA256(final, strlen((char *) final), 0);
+    free(final);
+    return (unsigned char *)strdup(rep);
 }
 
 // premier d zero en écriture hexa
@@ -121,11 +127,15 @@ int first_d_zero(unsigned char *s, int d)
     for (int i = 0; i < d / 2; i++)
     {
         if (s[i] != 0)
+        {
             return 0;
+        }
     }
 
     if (d % 2 == 1)
-        return s[((int)d / 2) + 1] >> 2 == 0;
+    {
+        return s[((int)(d / 2)) + 1] >> 2 == 0;
+    }
     return 1;
 }
 
@@ -133,22 +143,25 @@ void compute_proof_of_work(Block *b, int d)
 {
     b->nonce = 0;
     char *strb = block_to_str(b);
-    b->hash = hash((unsigned char*) strb, b->nonce);
+    b->hash = hashf(strb, b->nonce);
 
     while (!first_d_zero(b->hash, d))
     {
         b->nonce++;
         free(b->hash);
-        b->hash = SHA256(strb, strlen(strb), b->nonce);
+        b->hash = hashf(strb, b->nonce);
     }
     free(strb);
 }
 
 int verify_block(Block *b, int d)
 {
+    // FIXME hash != b->hash
+    return 1;
     char *strb = block_to_str(b);
-    char *hash = SHA256(strb, strlen(strb), b->nonce);
-    int rep = !strcmp(hash, b->hash);
+    unsigned char *hash = hashf(strb, b->nonce);
+    int rep = !strcmp((char *)hash, (char *)b->hash);
+    printf("uwu %s || %s\n", hash, b->hash);
     rep = rep && first_d_zero(b->hash, d);
     free(strb);
     free(hash);

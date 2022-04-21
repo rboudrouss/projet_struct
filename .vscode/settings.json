@@ -24,6 +24,7 @@
         "system_error": "c",
         "variant": "c",
         "generate.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "btree.h": "c"
     }
 }

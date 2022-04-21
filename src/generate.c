@@ -3,7 +3,7 @@
 #include "generate.h"
 #include "files.h"
 
-void generate_random_data(int nv, int nc)
+void generate_random_data(int nv, int nc, int np)
 { // TODO séparer cetet fonction en pls petites fonctions
     if (!nv)
         return;
@@ -14,6 +14,7 @@ void generate_random_data(int nv, int nc)
     Key **keyc = malloc(sizeof(Key *) * nc);
     int r;
     char *str1, *str2;
+    // génére les votants
     for (int i = 0; i < nv; i++)
     {
         // TODO implémenter anti-duplicata
@@ -38,7 +39,7 @@ void generate_random_data(int nv, int nc)
         // TODO free memory
         return;
     }
-
+    // génére des candidats aléatoires
     FILE *candf = fopen(CANDF, "w");
     for (int i = 0; i < nc; i++)
     {
@@ -52,10 +53,11 @@ void generate_random_data(int nv, int nc)
     }
     fclose(candf);
 
+    // génére les signatures/déclarations
     FILE *decf = fopen(DECF, "w");
     Signature *s;
     Protected *p;
-    for (int i = 0; i < nv; i++)
+    for (int i = 0; i < nv - np; i++)
     {
         r = rand() % nc;
         str1 = key_to_str(keyc[r]);
@@ -67,6 +69,19 @@ void generate_random_data(int nv, int nc)
         free(str2);
         free_protected(p);
     }
+    fclose(decf);
+
+    // generate random pending vote
+    for (int i = nv - np; i < nv; i++)
+    {
+        r = rand() % nc;
+        str1 = key_to_str(keyc[r]);
+        s = sign(str1, keys[i]);
+        p = init_protected(keyp[i], str1, s);
+        submit_vote(p); // using function for standardization but slower
+        free(str1);
+        free_protected(p);
+    }
     // TODO free tout le tableau (boucler sur chaque tableau et free)
     /*for (int i = 0; i < nv; i++)
     {
@@ -76,5 +91,4 @@ void generate_random_data(int nv, int nc)
     for (int i = 0; i < nc; i++)
         free_key(keyc[i]);
     */
-    fclose(decf);
 }

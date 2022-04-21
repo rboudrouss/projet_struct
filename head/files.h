@@ -3,10 +3,11 @@
 
 // from BIN folder
 #define BCFOLDER "blockchain"
-#define KEYSF BCFOLDER "/keys.txt"
-#define CANDF BCFOLDER "/candidates.txt"
-#define DECF BCFOLDER "/declarations.txt"
-#define PENDV BCFOLDER "/pending_votes.txt"
-#define PENDB BCFOLDER "/pending_block"
+#define TMPFOLDER BCFOLDER "/temp"
+#define KEYSF TMPFOLDER "/keys.txt"
+#define CANDF TMPFOLDER "/candidates.txt"
+#define DECF TMPFOLDER "/declarations.txt"
+#define PENDV TMPFOLDER "/pending_votes.txt"
+#define PENDB TMPFOLDER "/pending_block"
 
 #endif

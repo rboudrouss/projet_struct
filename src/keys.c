@@ -52,6 +52,8 @@ char *key_to_str(Key *key)
 
 Key *str_to_key(char *str)
 {
+    if(!str)
+        return NULL;
     Key *k = malloc(sizeof(Key));
     long val, n;
     sscanf(str, "(%lx,%lx)", &val, &n);

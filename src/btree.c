@@ -2,6 +2,22 @@
 #include <stdio.h>
 #include "btree.h"
 #include "files.h"
+#include <dirent.h>
+#include <string.h>
+
+CellTree *init_father_tree(CellProtected *c, int d)
+{
+    CellTree *rep = malloc(sizeof(CellTree));
+    Block *b = malloc(sizeof(Block));
+    b->previous_hash = (unsigned char *)"\0";
+    b->author = str_to_key("(0,0)");
+    b->votes = c;
+    compute_proof_of_work(b, d);
+    rep->block = b;
+    rep->father = rep->firstChild = rep->nextBro = NULL;
+    rep->height = 0;
+    return rep;
+}
 
 CellTree *create_node(Block *b)
 {
@@ -14,29 +30,47 @@ CellTree *create_node(Block *b)
 
 int update_height(CellTree *father, CellTree *child)
 {
+    if (!father)
+    {
+        printf("Error : no father in update_height function, not possible\n");
+        return -1;
+    }
+    if (!child)
+    {
+        int rep = father->height == 0;
+        father->height = 0;
+        return rep;
+    }
     if (father->height > (child->height + 1))
         return 0;
     father->height = child->height + 1;
     return 1;
 }
 
-void add_child(CellTree *father, CellTree *child)
+void add_child(CellTree **father, CellTree *child)
 {
-    father->firstChild = child;
+    if (!*father)
+    {
+        *father = child;
+        return;
+    }
+    CellTree *f = *father;
+    f->firstChild = child;
 
-    for (; father->father; father = father->father)
-        update_height(father->father, father);
+    for (; f->father; f = f->father)
+        update_height(f->father, f);
 }
 
 void print_tree(CellTree *node)
 {
     CellTree *c;
+
     for (; node; node = node->firstChild)
+    {
         for (c = node; c; c = c->nextBro)
-        {
-            printf("%s %d; ", node->block->hash, node->height);
-            printf("\n");
-        }
+            printf("%ld:%d; ", node->block->author->val, node->height);
+        printf("\n");
+    }
 }
 
 void delete_node(CellTree *node)
@@ -91,13 +125,57 @@ CellProtected *fusion_blocks(CellTree *tree)
 void create_block(CellTree *tree, Key *author, int d)
 {
     CellProtected *pl = read_protected(PENDV);
-    Block* b = malloc(sizeof(Block));
+    delete_non_valid(&pl);
+    FILE *pf = fopen(PENDV, "w");
+    fputc('\n', pf);
+    fclose(pf);
+
+    Block *b = malloc(sizeof(Block));
     b->author = author;
     b->previous_hash = last_node(tree)->block->hash;
-    compute_proof_of_work(b,d);
-    FILE* f = fopen(PENDB, "w");
-    char* str = block_to_str(b);
-    fputs(str,f);
-    fclose(f);
-    // TODO finish function
+    b->votes = pl;
+    compute_proof_of_work(b, d);
+    write_block(PENDB, b);
+
+    delete_block(b);
+}
+
+void add_block(int d, char *name)
+{
+    Block *b = read_block(PENDB);
+    FILE *pbf = fopen(PENDB, "w");
+    fputc('\n', pbf);
+    fclose(pbf);
+
+    if (!verify_block(b, d))
+    {
+        printf("block non valid\n");
+        delete_block(b);
+        return;
+    }
+    write_block(name, b);
+    delete_block(b);
+}
+
+CellTree *read_tree()
+{
+    // FIXME erreur lors de l'ouverture du fichiers
+    DIR *rep = opendir(BCFOLDER);
+    Block *b;
+    CellTree *c = NULL, *c2;
+    if (rep != NULL)
+    {
+        struct dirent *dir;
+        while ((dir = readdir(rep)))
+        {
+            if ((strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..") && strcmp(dir->d_name, "temp")))
+            {
+                b = read_block(strcat(BCFOLDER "/", dir->d_name));
+                c2 = create_node(b);
+                add_child(&c, c2);
+            }
+        }
+        closedir(rep);
+    }
+    return c;
 }

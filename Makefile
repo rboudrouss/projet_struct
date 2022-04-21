@@ -31,3 +31,5 @@ rapport:
 clean:
 	rm -f bin/*
 	rm -f vgcore*
+	rm -f blockchain/temp/*
+	rm -f blockchain/*

@@ -40,6 +40,8 @@ char *protected_to_str(Protected *pr)
 
 Protected *str_to_protected(char *str)
 {
+    if (!str)
+        return NULL;
     char key[STR_SIZE], sign[STR_SIZE], mess[STR_SIZE];
     sscanf(str, "%s %s %s", key, mess, sign);
     return init_protected(
@@ -48,12 +50,12 @@ Protected *str_to_protected(char *str)
         str_to_signature(sign));
 }
 
-void submit_vote(Protected* p)
+void submit_vote(Protected *p)
 {
-    FILE* f = fopen(PENDV, "a+");
+    FILE *f = fopen(PENDV, "a+");
     char *vote = protected_to_str(p);
-    fputs(vote,f);
-    fputc('\n',f);
+    fputs(vote, f);
+    fputc('\n', f);
     free(vote);
     fclose(f);
 }
