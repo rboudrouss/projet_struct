@@ -6,7 +6,7 @@ SDIR = ./src/
 RDIR = ./report/
 
 CFLAGS=-I $(IDIR) -lm -lssl -lcrypto
-OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o $(BDIR)cells.o $(BDIR)block.o $(BDIR)btree.o
+OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o $(BDIR)cells.o $(BDIR)block.o $(BDIR)btree.o $(BDIR)generate.o
 DEB=-ggdb -Wall
 
 TARGETS = main tests test
@@ -17,7 +17,7 @@ $(TARGETS): $(OBJ)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
 
 $(BDIR)%.o: $(SDIR)%.c $(IDIR)%.h
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(DEB)
 
 rapport:
 	pandoc $(RDIR)*.md \
