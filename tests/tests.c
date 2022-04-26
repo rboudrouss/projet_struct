@@ -9,11 +9,12 @@ int main()
     srand(time(NULL));
     print_f("this tests must be memory leaks free");
 
-    keys_tests();
     prime_tests();
-    protec_test();
     rsa_tests();
+    keys_tests();
     signs_tests();
+    protec_test();
+    cells_tests();
 
     return 0;
 }

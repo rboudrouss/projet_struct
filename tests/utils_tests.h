@@ -4,3 +4,4 @@
 #define print_f(a) printf(RED a WHITE)
 
 void print_long_vector(long *result, int size);
+int longl_cmp(long* l1, long* l2);

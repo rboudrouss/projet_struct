@@ -34,7 +34,10 @@ int verify(Protected *pr)
 char *protected_to_str(Protected *pr)
 {
     char *rep = malloc(STR_SIZE * sizeof(char));
-    sprintf(rep, "%s %s %s", key_to_str(pr->pKey), pr->mess, signature_to_str(pr->sgn));
+    char* k = key_to_str(pr->pKey), *s = signature_to_str(pr->sgn);
+    sprintf(rep, "%s %s %s", k, pr->mess, s);
+    free(k);
+    free(s);
     return rep;
 }
 
@@ -52,6 +55,7 @@ Protected *str_to_protected(char *str)
 
 void submit_vote(Protected *p)
 {
+    // TODO Test this fonction
     FILE *f = fopen(PENDV, "a+");
     char *vote = protected_to_str(p);
     fputs(vote, f);
