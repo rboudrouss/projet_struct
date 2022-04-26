@@ -25,6 +25,8 @@
         "variant": "c",
         "generate.h": "c",
         "stdlib.h": "c",
-        "btree.h": "c"
+        "btree.h": "c",
+        "utils.h": "c",
+        "tests.h": "c"
     }
 }

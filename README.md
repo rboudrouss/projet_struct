@@ -1,7 +1,7 @@
 # Projet
 ### Boudrouss Réda
 
-<!> don't forget to create the `blockchain/` and `bin/` folder <!>
+just `make` :)
 
 TODO
 - [] Safe all mallocs & opens

@@ -4,19 +4,33 @@ BDIR = ./bin/
 IDIR = ./head/
 SDIR = ./src/
 RDIR = ./report/
+TDIR = ./tests/
 
 CFLAGS=-I $(IDIR) -lm -lssl -lcrypto
-OBJ = $(BDIR)rsa.o $(BDIR)prime.o $(BDIR)keys.o $(BDIR)protec.o $(BDIR)signs.o $(BDIR)cells.o $(BDIR)block.o $(BDIR)btree.o $(BDIR)generate.o
 DEB=-ggdb -Wall
 
-TARGETS = main tests test
+HEADS := $(shell find $(IDIR) -name *.h -not -name "*files.h")
+OBJS := $(HEADS:$(IDIR)%.h=$(BDIR)%.o)
 
-all: $(TARGETS)
+OBJS_TESTS := $(shell find $(TDIR) -name "*.c" -not -name "tests.c")
 
-$(TARGETS): $(OBJ)
+TARGETS = main test
+
+all: folders $(TARGETS) tests
+
+folders:
+	mkdir -p bin blockchain/temp
+
+$(TARGETS): $(OBJS)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
 
 $(BDIR)%.o: $(SDIR)%.c $(IDIR)%.h
+	$(CC) -c -o $@ $< $(CFLAGS) $(DEB)
+
+tests: $(OBJS) $(OBJS_TESTS)
+	$(CC) -o $(BDIR)$@ $(TDIR)$@.c $^ $(DEB) $(CFLAGS)
+
+%_tests.o: $(TDIR)%_tests.c
 	$(CC) -c -o $@ $< $(CFLAGS) $(DEB)
 
 rapport:
@@ -31,5 +45,4 @@ rapport:
 clean:
 	rm -f bin/*
 	rm -f vgcore*
-	rm -f blockchain/temp/*
-	rm -f blockchain/*
+	find blockchain -maxdepth 2 -type f -delete
