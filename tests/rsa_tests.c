@@ -8,6 +8,11 @@
 #include <stdio.h>
 #include <string.h>
 
+// small primes
+static int small_p[SM] = {2, 3, 5, 7, 41, 89, 139, 197, 239, 331, 599, 701, 829, 1103, 3797};
+// big primes
+static long big_p[B] = {2147483647, 2147482873, 2147480897, 2147478727, 2147470679, 2147469173, 2147465563, 2147463491, 2147462579, 2147462143};
+
 void generate_key_value_tests()
 {
     print_f("testing 'generate_key_value' function\n");

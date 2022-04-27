@@ -175,7 +175,7 @@ void delete_block(Block *b)
     free(b);
     free(b->hash);
     free(b->previous_hash);
-    delete_only_list_protected(b->votes);
+    delete_list_protected(b->votes);
 }
 
 void delete_all_block(Block *b)
@@ -183,5 +183,5 @@ void delete_all_block(Block *b)
     free(b);
     free(b->hash);
     free(b->previous_hash);
-    delete_list_protected(b->votes);
+    delete_only_list_protected(b->votes);
 }

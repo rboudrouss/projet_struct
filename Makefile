@@ -1,3 +1,5 @@
+DEBUG ?= 1
+
 CC=gcc
 
 BDIR = ./bin/
@@ -8,6 +10,11 @@ TDIR = ./tests/
 
 CFLAGS=-I $(IDIR) -lm -lssl -lcrypto
 DEB=-ggdb -Wall
+ifeq ($(DEBUG), 1)
+    CFLAGS += $(DEB)
+else
+    CFLAGS += -O3
+endif
 
 HEADS := $(shell find $(IDIR) -name *.h -not -name "*files.h")
 OBJS := $(HEADS:$(IDIR)%.h=$(BDIR)%.o)
@@ -19,7 +26,7 @@ TARGETS = main test
 all: folders $(TARGETS) tests
 
 folders:
-	mkdir -p bin blockchain/temp
+	mkdir -p bin blockchain/temp tests/blockchain/temp
 
 $(TARGETS): $(OBJS)
 	$(CC) -o $(BDIR)$@ $(SDIR)$@.c $^ $(DEB) $(CFLAGS)
@@ -43,6 +50,6 @@ rapport:
 	-o rapport.pdf
 
 clean:
-	rm -f bin/*
-	rm -f vgcore*
+	rm -f vgcore* bin/*
 	find blockchain -maxdepth 2 -type f -delete
+	find tests/blockchain -maxdepth 2 -type f -delete

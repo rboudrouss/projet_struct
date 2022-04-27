@@ -14,6 +14,7 @@ CellKey *create_cell_key(Key *key)
 }
 
 // read from pair of public & private key
+// file must finish with a \n
 CellKey *read_public_keys_fromp(char *name)
 {
     FILE *f = fopen(name, "r");
@@ -23,7 +24,7 @@ CellKey *read_public_keys_fromp(char *name)
     CellKey *kl = create_cell_key(k);
     while (!feof(f))
     {
-        fscanf(f, "%s %s\n", buffer1, buffer2);
+        fscanf(f, "%s %s", buffer1, buffer2);
         k = str_to_key(buffer1);
         add_cell_key(&kl, k);
     };
@@ -32,6 +33,7 @@ CellKey *read_public_keys_fromp(char *name)
 }
 
 // FIXME duplicate candidant (?)
+// file must finish with a \n
 CellKey *read_public_keys(char *name)
 {
     FILE *f = fopen(name, "r");
@@ -42,6 +44,8 @@ CellKey *read_public_keys(char *name)
     while (!feof(f))
     {
         fgets(buffer, sizeof(buffer), f);
+        if(feof(f)) 
+            break; // HACK
         p = str_to_key(buffer);
         add_cell_key(&pl, p);
     }
@@ -136,11 +140,13 @@ void print_list_protected(CellProtected *l)
         if (l->data)
         {
             s = protected_to_str(l->data);
-            printf("%s ", s);
+            printf("%s", s);
             free(s);
         }
-        else
-            printf("END");
+        else 
+            printf("<!>EMPTY<!>");
+        if(l->next)
+            printf(" || ");
     }
     printf(" ]\n");
 }
@@ -152,22 +158,6 @@ void delete_cell_protected(CellProtected *c)
 }
 
 void delete_list_protected(CellProtected *c)
-{
-    // FIXME wtf la différence entre les deux fonctions là ?
-    if (!c)
-        return;
-
-    CellProtected *temp;
-
-    do
-    {
-        temp = c->next;
-        free(c);
-        c = temp;
-    } while (c);
-}
-
-void delete_only_list_protected(CellProtected *c)
 {
     if (!c)
         return;
@@ -182,6 +172,24 @@ void delete_only_list_protected(CellProtected *c)
     } while (c);
 }
 
+// doesn't delete Keys
+void delete_only_list_protected(CellProtected *c)
+{
+    if (!c)
+        return;
+
+    CellProtected *temp;
+
+    do
+    {
+        temp = c->next;
+        free(c->data->mess);
+        free_signature(c->data->sgn);
+        free(c);
+        c = temp;
+    } while (c);
+}
+
 void delete_non_valid(CellProtected **c)
 {
     if (!*c)
@@ -190,13 +198,15 @@ void delete_non_valid(CellProtected **c)
     CellProtected *temp = *c, *suiv;
     int verified = verify(temp->data);
 
-    while (!verified)
+    while (!verified && temp)
     {
         temp = temp->next;
-        (*c); // TODO ?
-        c = &temp;
+        delete_cell_protected(*c);
+        *c = temp;
         verified = verify(temp->data);
     }
+    if(!temp)
+        return;
 
     while (temp->next)
     {
@@ -294,6 +304,9 @@ HashTable *create_hashtable(CellKey *keys, int size)
 
 void delete_hashtable(HashTable *t)
 {
+    for(int i = 0; i<t->size; i++)
+        if(t->tab[i])
+            free(t->tab[i]);
     free(t->tab);
     free(t);
 }

@@ -27,6 +27,7 @@
         "stdlib.h": "c",
         "btree.h": "c",
         "utils.h": "c",
-        "tests.h": "c"
+        "tests.h": "c",
+        "utils_tests.h": "c"
     }
 }

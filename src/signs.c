@@ -37,6 +37,12 @@ Signature *sign(char *mess, Key *sKey)
 
 char *signature_to_str(Signature *sgn)
 {
+    if(!sgn){
+        printf("Warning : no signe given to sgn_to_str function\n");
+        return strdup("#");
+    }
+    if(sgn->size==0 || !sgn->content)
+        return strdup("#");
     char *result = malloc(10 * sgn->size * sizeof(char));
     result[0] = '#';
     int pos = 1;

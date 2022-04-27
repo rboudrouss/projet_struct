@@ -15,6 +15,8 @@ Protected *init_protected(Key *pKey, char *mess, Signature *sgn)
 
 void free_protected(Protected *p)
 {
+    if(!p)
+        return;
     free_signature(p->sgn);
     free_key(p->pKey);
     free(p->mess);
@@ -23,6 +25,8 @@ void free_protected(Protected *p)
 
 int verify(Protected *pr)
 {
+    if(!pr)
+        return 0;
     if (strlen(pr->mess) != pr->sgn->size)
         return 0; // make it faster, it takes some time to decrypt
     char *decr = decrypt(pr->sgn->content, pr->sgn->size, pr->pKey->val, pr->pKey->n);

@@ -7,6 +7,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// small primes
+static int small_p[SM] = {2, 3, 5, 7, 41, 89, 139, 197, 239, 331, 599, 701, 829, 1103, 3797};
+// small composits
+static int small_np[SM] = {1, 4, 6, 8, 9, 15, 21, 51, 221, 343, 413, 777, 973, 1547, 4477};
+
+
 void is_prime_naive_test()
 {
     print_f("testing is_prime_naive function\n");
