@@ -58,7 +58,7 @@ void insert_key_table(HashTable *t, Key *key);
 HashCell *get_cell_table(HashTable *t, Key *key);
 HashTable *create_hashtable(CellKey *keys, int size);
 void delete_hashtable(HashTable *t);
+void print_hashtable(HashTable* t);
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV);
-// TODO function print hashtable
 
 #endif

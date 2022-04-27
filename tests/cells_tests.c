@@ -123,6 +123,28 @@ void add_cell_protected_tests()
     delete_list_protected(l);
 }
 
+void delete_only_list_protected_tests()
+{
+    print_f("testing 'delete_only_list_protected' function\n");
+    Key *k = create_key(0, 0);
+    Key *k2 = dup_key(k);
+    CellProtected *l = NULL;
+    add_cell_protected(
+        &l,
+        init_protected(
+            k,
+            TEST_MSG,
+            init_signature(NULL, 0)));
+    add_cell_protected(
+        &l,
+        init_protected(
+            k2,
+            TEST_MSG,
+            init_signature(NULL, 0)));
+    delete_only_list_protected(l);
+    free_key(k);
+    free_key(k2);
+}
 void print_list_protected_tests()
 {
     print_f("testing 'print_list_protected' function\n");
@@ -153,58 +175,107 @@ void delete_non_valid_tests()
     delete_non_valid(&p);
     delete_list_protected(p);
 
-    Key* k = malloc(sizeof(Key)), *k2 = malloc(sizeof(Key));
-    init_pair_keys(k,k2,100,300);
-    Signature* vs = sign(TEST_MSG, k2);
+    Key *k = malloc(sizeof(Key)), *k2 = malloc(sizeof(Key));
+    init_pair_keys(k, k2, 100, 300);
+    Signature *vs = sign(TEST_MSG, k2);
     free_key(k2);
 
     p = NULL;
     // non valid
     add_cell_protected(&p, init_protected(
-        dup_key(k),
-        TEST_MSG,
-        init_signature(NULL,0)
-    ));
+                               dup_key(k),
+                               TEST_MSG,
+                               init_signature(NULL, 0)));
     // valid
     add_cell_protected(&p, init_protected(
-        dup_key(k),
-        TEST_MSG,
-        dup_sign(vs)
-    ));
+                               dup_key(k),
+                               TEST_MSG,
+                               dup_sign(vs)));
     // non valid
     k->val++;
     add_cell_protected(&p, init_protected(
-        dup_key(k),
-        TEST_MSG,
-        dup_sign(vs)
-    ));
+                               dup_key(k),
+                               TEST_MSG,
+                               dup_sign(vs)));
     k->val--;
     // non valid
     vs->size--;
     add_cell_protected(&p, init_protected(
-        dup_key(k),
-        TEST_MSG,
-        dup_sign(vs)
-    ));
+                               dup_key(k),
+                               TEST_MSG,
+                               dup_sign(vs)));
     vs->size++;
     // non valid
     vs->content[0]++;
     add_cell_protected(&p, init_protected(
-        dup_key(k),
-        TEST_MSG,
-        dup_sign(vs)
-    ));
+                               dup_key(k),
+                               TEST_MSG,
+                               dup_sign(vs)));
     vs->content[0]--;
 
     delete_non_valid(&p);
     print_list_protected(p);
     assert(p && !p->next);
-    assert(key_cmp(k,p->data->pKey));
-    assert(!strcmp(p->data->mess,TEST_MSG));
+    assert(key_cmp(k, p->data->pKey));
+    assert(!strcmp(p->data->mess, TEST_MSG));
     assert(vs->size == p->data->sgn->size);
 
     free_key(k);
     free_signature(vs);
+    delete_list_protected(p);
+}
+
+void create_hashtable_tests()
+{
+    print_f("testing 'create_hashtable', 'create_hashcell' and 'delete_hashtable' function\n");
+    Key *k = create_key(10, 4);
+    HashTable *t = create_hashtable(NULL, 2);
+    t->tab[0] = create_hashcell(k);
+    assert(t->tab[0]->key == k);
+    assert(!t->tab[1]);
+    free(k);
+    delete_hashtable(t);
+}
+
+void insert_key_table_tests()
+{
+    print_f("testing 'find_position', 'insert_key_table' and 'print_hastable' functions\n");
+    CellKey *kl = generate_cellkeys(ARRAY_SIZE);
+    add_cell_key(&kl, create_key(0, 0));
+    HashTable *t = create_hashtable(kl, ARRAY_SIZE * 2);
+    print_hashtable(t);
+    delete_hashtable(t);
+    delete_list_keys(kl);
+}
+
+void get_cell_table_tests()
+{
+    print_f("testing 'get_cell_table' function\n");
+    CellKey *kl = generate_cellkeys(ARRAY_SIZE);
+    HashTable *t = create_hashtable(kl, ARRAY_SIZE * 2);
+    assert(get_cell_table(t, kl->data)->key == kl->data);
+    delete_hashtable(t);
+    delete_list_keys(kl);
+}
+
+void compute_winner_tests()
+{
+    // CellKey *cand = create_cell_key(create_key(0, 0));
+    print_f("testing 'compute_winner' function\n");
+    CellKey *cand = generate_cellkeys(ARRAY_SIZE);
+    char *str = key_to_str(cand->data);
+    CellProtected *votes = generate_cellprotected(ARRAY_SIZE, str), *t;
+    CellKey *v = NULL;
+    for (t = votes; t; t = t->next)
+        add_cell_key(&v, t->data->pKey);
+
+    Key *nv_cand = compute_winner(votes, cand, v, ARRAY_SIZE, ARRAY_SIZE);
+    assert(nv_cand == cand->data);
+    free(str);
+    delete_only_list_protected(votes);
+    // delete_list_protected(votes);
+    delete_list_keys(cand);
+    delete_list_keys(v);
 }
 
 void cells_tests()
@@ -216,11 +287,18 @@ void cells_tests()
     print_list_keys_tests();
     read_public_keys_tests();
     read_public_keys_fromp_tests();
-    
+
     // CellProtected
     create_cell_protected_tests();
     add_cell_protected_tests();
+    delete_only_list_protected_tests();
     print_list_protected_tests();
     fusion_protected_tests();
     delete_non_valid_tests();
+
+    // Hashtable
+    create_hashtable_tests();
+    insert_key_table_tests();
+    get_cell_table_tests();
+    compute_winner_tests();
 }

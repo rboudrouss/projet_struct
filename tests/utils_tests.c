@@ -32,7 +32,7 @@ CellKey *generate_cellkeys(int s)
 {
     CellKey *rep = NULL;
     for (int i = 0; i < s; i++)
-        add_cell_key(&rep, create_key(rand(), rand()));
+        add_cell_key(&rep, create_key(rand()/2, rand()/2));
     return rep;
 }
 
@@ -51,8 +51,8 @@ CellProtected *generate_cellprotected(int s, char *msg)
                 &rep,
                 init_protected(
                     create_key(
-                        rand(),
-                        rand()),
+                        rand()/2,
+                        rand()/2),
                     msg,
                     init_signature(NULL, 0)));
         }
@@ -75,8 +75,8 @@ CellProtected *generate_cellprotected(int s, char *msg)
         &rep,
         init_protected(
             create_key(
-                rand(),
-                rand()),
+                rand()/2,
+                rand()/2),
             msg,
             init_signature(NULL, 0)));
     return rep;

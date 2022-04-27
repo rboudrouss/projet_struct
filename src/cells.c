@@ -44,7 +44,7 @@ CellKey *read_public_keys(char *name)
     while (!feof(f))
     {
         fgets(buffer, sizeof(buffer), f);
-        if(feof(f)) 
+        if (feof(f))
             break; // HACK
         p = str_to_key(buffer);
         add_cell_key(&pl, p);
@@ -143,9 +143,9 @@ void print_list_protected(CellProtected *l)
             printf("%s", s);
             free(s);
         }
-        else 
+        else
             printf("<!>EMPTY<!>");
-        if(l->next)
+        if (l->next)
             printf(" || ");
     }
     printf(" ]\n");
@@ -185,6 +185,7 @@ void delete_only_list_protected(CellProtected *c)
         temp = c->next;
         free(c->data->mess);
         free_signature(c->data->sgn);
+        free(c->data);
         free(c);
         c = temp;
     } while (c);
@@ -205,7 +206,7 @@ void delete_non_valid(CellProtected **c)
         *c = temp;
         verified = verify(temp->data);
     }
-    if(!temp)
+    if (!temp)
         return;
 
     while (temp->next)
@@ -265,8 +266,15 @@ int find_position(HashTable *t, Key *key)
     }
     HashCell **tab = t->tab;
     int hash = hash_function(key, t->size);
-    for (; tab[hash] && !key_cmp(tab[hash]->key, key); hash = (hash + 1) % t->size)
+
+    int i;
+    for (i = 0; tab[hash] && !key_cmp(tab[hash]->key, key) && i < t->size + 1; hash = (hash + 1) % t->size, i++)
         ;
+    if (i > t->size)
+    {
+        printf("<!> HASHTABLE IS FULL <!>\n");
+        return 0;
+    }
     return hash;
 }
 
@@ -277,6 +285,7 @@ void insert_key_table(HashTable *t, Key *key)
     t->tab[pos] = c;
 }
 
+// get value by key
 HashCell *get_cell_table(HashTable *t, Key *key)
 {
     if (!key)
@@ -304,11 +313,26 @@ HashTable *create_hashtable(CellKey *keys, int size)
 
 void delete_hashtable(HashTable *t)
 {
-    for(int i = 0; i<t->size; i++)
-        if(t->tab[i])
+    for (int i = 0; i < t->size; i++)
+        if (t->tab[i])
             free(t->tab[i]);
     free(t->tab);
     free(t);
+}
+
+void print_hashtable(HashTable *t)
+{
+    char *s;
+    printf("Printing hastable : [\n");
+    for (int i = 0; i < t->size; i++)
+        if (t->tab[i])
+        {
+            s = key_to_str(t->tab[i]->key);
+            printf("%03d | %s : %d\n", i, s, t->tab[i]->val);
+            free(s);
+        }
+
+    printf("]\n");
 }
 
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
@@ -316,44 +340,42 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
     HashTable *HC = create_hashtable(candidates, sizeC * 2);
     HashTable *HV = create_hashtable(voters, sizeV * 2);
 
-    HashCell *c;
+    HashCell *c, *v;
     Key *keyc;
-    int nb_vote = -1;
 
     for (; decl; decl = decl->next)
     {
-        c = get_cell_table(HV, decl->data->pKey);
+        v = get_cell_table(HV, decl->data->pKey);
 
-        if (!c)
+        if (!v)
         {
-            printf("Warning : Candidate not found in compute winner\n");
+            printf("Warning : voter not found in compute winner\n");
             continue;
         }
 
-        if (c->val == 1)
+        if (v->val == 1)
         {
-            printf("Warning : candidate has already voted, there might be a duplicate in the array\n");
+            printf("Warning : voter has already voted, there might be a duplicate in the array\n");
             continue;
         }
-        c->val = 1;
+        v->val = 1;
 
         keyc = str_to_key(decl->data->mess);
         c = get_cell_table(HC, keyc);
+        free_key(keyc);
+        keyc = NULL;
 
         if (!c)
         {
             printf("Warning : Signature to an non-existing candidate, mess = %s\n", decl->data->mess);
-            free_key(keyc);
-            keyc = NULL;
             continue;
         }
-
         c->val++;
-        free_key(keyc);
-        keyc = NULL;
     }
 
-    for (int i = 0; i < sizeC; i++)
+    int nb_vote = -1;
+
+    for (int i = 0; i < sizeC * 2; i++)
     {
         if (!HC->tab[i])
             continue;

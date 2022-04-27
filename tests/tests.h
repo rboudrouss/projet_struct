@@ -11,3 +11,4 @@ void protec_test();
 void rsa_tests();
 void signs_tests();
 void cells_tests();
+void block_tests();
