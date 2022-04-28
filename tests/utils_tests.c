@@ -1,6 +1,7 @@
 #include "utils_tests.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void print_long_vector(long *result, int size)
 {
@@ -90,4 +91,15 @@ Signature* dup_sign(Signature* s)
 Key* dup_key(Key* k)
 {
     return create_key(k->val, k->n);
+}
+
+Block* generate_block(int s, char* msg ,char* hash, char* prev)
+{
+    Block *b = malloc(sizeof(Block));
+    b->author = create_key(0,0);
+    b->votes = generate_cellprotected(s, msg);
+    b->nonce = 0;
+    b->hash = (unsigned char *)strdup(hash);
+    b->previous_hash = (unsigned char *)strdup(prev);
+    return b;
 }

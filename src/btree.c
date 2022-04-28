@@ -78,6 +78,7 @@ void delete_node(CellTree *node)
     if (!node)
         return;
     delete_block(node->block);
+    free(node);
 }
 
 void delete_tree(CellTree *tree)

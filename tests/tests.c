@@ -15,6 +15,8 @@ int main()
     signs_tests();
     protec_test();
     cells_tests();
+    block_tests();
+    bree_tests();
 
     return 0;
 }

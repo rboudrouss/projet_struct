@@ -24,5 +24,6 @@ Key* create_key(long val, long n);
 CellProtected* generate_cellprotected(int s, char* msg);
 Signature* dup_sign(Signature* s);
 Key* dup_key(Key* k);
+Block* generate_block(int s, char* msg ,char* hash, char* prev);
 
 #endif

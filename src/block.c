@@ -11,6 +11,14 @@ void write_block(char *filename, Block *block)
     if (f == NULL)
     {
         perror("Erreur lors de l'ouverture du fichier (write_block).\n");
+        fclose(f);
+        return;
+    }
+    if (!block)
+    {
+        perror("no Block specified in 'write_block' function\n");
+        fputc('\n', f);
+        fclose(f);
         return;
     }
 
@@ -172,10 +180,13 @@ int verify_block(Block *b, int d)
 
 void delete_block(Block *b)
 {
-    free(b);
+    if (!b)
+        return;
     free(b->hash);
     free(b->previous_hash);
+    free_key(b->author);
     delete_list_protected(b->votes);
+    free(b);
 }
 
 void delete_all_block(Block *b)

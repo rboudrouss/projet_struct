@@ -12,3 +12,4 @@ void rsa_tests();
 void signs_tests();
 void cells_tests();
 void block_tests();
+void bree_tests();
