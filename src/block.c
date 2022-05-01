@@ -102,48 +102,62 @@ Block *read_block(char *filename)
 
 char *block_to_str(Block *block)
 {
-    if (!block)
+    int str_size = STR_SIZE;
+    char *res = (char *)malloc(sizeof(char) * str_size);
+    if (res == NULL)
+    {
+        perror("Erreur d'allocation (block_to_str).\n");
         return NULL;
-    char *key = key_to_str(block->author);
-    char *vote = protected_to_str(block->votes->data);
-    char *rep = malloc(STR_SIZE * sizeof(char));
-    sprintf(rep, "%s %s %s %d", key, block->previous_hash, vote, block->nonce);
-    free(key);
-    free(vote);
-    return rep;
+    }
+
+    // Writing author, previous hash, PoW
+    char *buffer = key_to_str(block->author);
+    sprintf(res, "%s %s %d\n", buffer, block->previous_hash, block->nonce);
+    free(buffer);
+
+    CellProtected *current = block->votes;
+    // Writing all votes
+    while (current != NULL)
+    {
+        buffer = protected_to_str(current->data);
+
+        // Calculating the new string size and reallocating it
+        str_size = str_size + strlen(buffer) + 2;
+        res = realloc(res, str_size);
+
+        strcat(strcat(res, buffer), " ");
+
+        free(buffer);
+
+        current = current->next;
+    }
+
+    return res;
 }
 
-unsigned char *hashf(char *s, int nonce)
+unsigned char *hashf(char *s)
 {
-    char *sa = strdup(s);
-    char strn[STR_SIZE];
-    sprintf(strn, "%x", nonce);
-    unsigned char *final = (unsigned char *)strcat(sa, strn);
-    char *rep = (char *)SHA256(final, strlen((char *) final), 0);
-    free(final);
-    return (unsigned char *)strdup(rep);
+    unsigned char *hashed = SHA256((unsigned char *)s, strlen(s), 0);
+
+    unsigned char *final = malloc(sizeof(unsigned char) * STR_SIZE);
+
+    sprintf((char *) final, "%02x", hashed[0]);
+
+    char buffer[8];
+    for (int i = 1; i < SHA256_DIGEST_LENGTH; i++)
+    {
+        sprintf(buffer, "%02x", hashed[i]);
+        strcat((char *) final, buffer);
+    }
+    return final;
 }
 
 // premier d zero en écriture hexa
 int first_d_zero(unsigned char *s, int d)
 {
-    if (d == 1)
-    {
-        return s[0] >> 2 == 0;
-    }
-
-    for (int i = 0; i < d / 2; i++)
-    {
-        if (s[i] != 0)
-        {
+    for (int i = 0; i < d; i++)
+        if (s[i] != '0')
             return 0;
-        }
-    }
-
-    if (d % 2 == 1)
-    {
-        return s[((int)(d / 2)) + 1] >> 2 == 0;
-    }
     return 1;
 }
 
@@ -151,25 +165,25 @@ void compute_proof_of_work(Block *b, int d)
 {
     b->nonce = 0;
     char *strb = block_to_str(b);
-    b->hash = hashf(strb, b->nonce);
+    b->hash = hashf(strb);
 
     while (!first_d_zero(b->hash, d))
     {
         b->nonce++;
+        free(strb);
         free(b->hash);
-        b->hash = hashf(strb, b->nonce);
+        strb = block_to_str(b);
+        b->hash = hashf(strb);
     }
     free(strb);
 }
 
 int verify_block(Block *b, int d)
 {
-    // FIXME hash != b->hash
-    return 1;
     char *strb = block_to_str(b);
-    unsigned char *hash = hashf(strb, b->nonce);
+    unsigned char *hash = hashf(strb);
+    printf("%s || %s \n", hash, b->hash);
     int rep = !strcmp((char *)hash, (char *)b->hash);
-    printf("uwu %s || %s\n", hash, b->hash);
     rep = rep && first_d_zero(b->hash, d);
     free(strb);
     free(hash);

@@ -4,6 +4,7 @@
 #include "files.h"
 #include <dirent.h>
 #include <string.h>
+#define COUNT 10
 
 CellTree *init_father_tree(CellProtected *c, int d)
 {
@@ -55,22 +56,25 @@ void add_child(CellTree **father, CellTree *child)
         return;
     }
     CellTree *f = *father;
+    CellTree *temp = f->firstChild;
     f->firstChild = child;
+    child->nextBro = temp;
+    child->father = f;
 
-    for (; f->father; f = f->father)
-        update_height(f->father, f);
+    for (; child->father; child = child->father)
+        update_height(child->father, child);
 }
 
-void print_tree(CellTree *node)
+void print_tree(CellTree *tree)
 {
-    CellTree *c;
+    if (tree == NULL)
+        return;
 
-    for (; node; node = node->firstChild)
-    {
-        for (c = node; c; c = c->nextBro)
-            printf("%ld:%d; ", node->block->author->val, node->height);
-        printf("\n");
-    }
+    printf("\nHauteur %d : %s\n", tree->height, tree->block->hash);
+    printf("\tself : %p\n\tfather : %p\n\tfirstChild : %p\n\tnextBro : %p\n\tprevious_hash : %s\n", tree, tree->father, tree->firstChild, tree->nextBro, (char *)tree->block->previous_hash);
+
+    print_tree(tree->nextBro);
+    print_tree(tree->firstChild);
 }
 
 void delete_node(CellTree *node)
@@ -89,6 +93,7 @@ void delete_tree(CellTree *tree)
     delete_tree(tree->nextBro);
 
     delete_block(tree->block);
+    free(tree);
 }
 
 CellTree *highest_child(CellTree *cell)
@@ -117,9 +122,12 @@ CellTree *last_node(CellTree *tree)
 CellProtected *fusion_blocks(CellTree *tree)
 {
     CellTree *cell = highest_child(tree);
-    CellProtected *rep = NULL;
-    for (; cell; cell = cell->firstChild)
-        fusion_protected(rep, cell->block->votes);
+    CellProtected *rep = NULL, *new;
+    for (; cell; cell = cell->firstChild){
+        new = fusion_protected(rep, cell->block->votes);
+        only_free_list_protected(rep);
+        rep = new;
+    }
     return rep;
 }
 
@@ -133,7 +141,10 @@ void create_block(CellTree *tree, Key *author, int d)
 
     Block *b = malloc(sizeof(Block));
     b->author = author;
-    b->previous_hash = last_node(tree)->block->hash;
+    if (tree)
+        b->previous_hash = last_node(tree)->block->hash;
+    else
+        b->previous_hash =(unsigned char*) strdup("null");
     b->votes = pl;
     compute_proof_of_work(b, d);
     write_block(PENDB, b);

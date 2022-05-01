@@ -191,6 +191,17 @@ void delete_only_list_protected(CellProtected *c)
     } while (c);
 }
 
+void only_free_list_protected(CellProtected* l)
+{
+    CellProtected* t;
+    while (l)
+    {
+        t = l->next;
+        free(l);
+        l = t;
+    }
+}
+
 void delete_non_valid(CellProtected **c)
 {
     if (!*c)
@@ -222,14 +233,23 @@ void delete_non_valid(CellProtected **c)
     }
 }
 
-void fusion_protected(CellProtected *p1, CellProtected *p2)
+CellProtected* fusion_protected(CellProtected *p1, CellProtected *p2)
 {
-    // TODO ? maybe clone array
-    if (!(p1 && p2))
-        return;
-    for (; p1->next; p1 = p1->next)
-        ;
-    p1->next = p2;
+    CellProtected *chaine = NULL;
+
+    while (p1 != NULL)
+    {
+        add_cell_protected(&chaine, p1->data);
+        p1 = p1->next;
+    }
+
+    while (p2 != NULL)
+    {
+        add_cell_protected(&chaine,p2->data);
+        p2 = p2->next;
+    }
+
+    return chaine;
 }
 
 // hashtab

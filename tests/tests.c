@@ -16,7 +16,7 @@ int main()
     protec_test();
     cells_tests();
     block_tests();
-    bree_tests();
+    btree_tests();
 
     return 0;
 }

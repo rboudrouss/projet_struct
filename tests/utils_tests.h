@@ -1,4 +1,4 @@
-#include "block.h"
+#include "btree.h"
 #include "files.h"
 
 #ifndef __UTILST__
@@ -24,6 +24,7 @@ Key* create_key(long val, long n);
 CellProtected* generate_cellprotected(int s, char* msg);
 Signature* dup_sign(Signature* s);
 Key* dup_key(Key* k);
-Block* generate_block(int s, char* msg ,char* hash, char* prev);
+Block *generate_block(int s, char *msg, char *prev, int d);
+CellTree *generate_test_tree(int array_size, char *msg);
 
 #endif

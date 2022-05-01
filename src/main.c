@@ -28,10 +28,10 @@ int main()
     char *s = key_to_str(w);
     printf("Le gagnant de cette élection est %s\n", s);
 
-    CellTree *tree = init_father_tree(p, NBD);
-    write_block(BCFOLDER "/1.blk", tree->block);
+    CellTree *tree = NULL;
     create_block(tree, w, NBD);
-    add_block(NBD, BCFOLDER "/2.blk");
+    return 0;
+    add_block(NBD, BCFOLDER "/1.blk");
 
     print_tree(tree);
     // CellTree *tree2 = read_tree();

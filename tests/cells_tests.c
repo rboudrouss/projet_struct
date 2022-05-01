@@ -159,12 +159,15 @@ void fusion_protected_tests()
     print_f("Testing 'fusion_protected' function\n");
     CellProtected *p = generate_cellprotected(ARRAY_SIZE, TEST_MSG);
     CellProtected *p2 = generate_cellprotected(ARRAY_SIZE, TEST_MSG);
-    CellProtected *p3 = p;
-    for (; p3->next; p3 = p3->next)
+    CellProtected *f = fusion_protected(p, p2);
+    CellProtected *p3 = f;
+    for (; p3->data != p2->data; p3 = p3->next)
         ;
-    fusion_protected(p, p2);
-    assert(p3->next == p2);
+    assert(p3->data == p2->data);
+    delete_list_protected(p2);
     delete_list_protected(p);
+
+    only_free_list_protected(f);
 }
 
 void delete_non_valid_tests()

@@ -33,7 +33,7 @@ CellKey *generate_cellkeys(int s)
 {
     CellKey *rep = NULL;
     for (int i = 0; i < s; i++)
-        add_cell_key(&rep, create_key(rand()/2, rand()/2));
+        add_cell_key(&rep, create_key(rand() / 2, rand() / 2));
     return rep;
 }
 
@@ -52,8 +52,8 @@ CellProtected *generate_cellprotected(int s, char *msg)
                 &rep,
                 init_protected(
                     create_key(
-                        rand()/2,
-                        rand()/2),
+                        rand() / 2,
+                        rand() / 2),
                     msg,
                     init_signature(NULL, 0)));
         }
@@ -76,30 +76,40 @@ CellProtected *generate_cellprotected(int s, char *msg)
         &rep,
         init_protected(
             create_key(
-                rand()/2,
-                rand()/2),
+                rand() / 2,
+                rand() / 2),
             msg,
             init_signature(NULL, 0)));
     return rep;
 }
 
-Signature* dup_sign(Signature* s)
+Signature *dup_sign(Signature *s)
 {
     return init_signature(s->content, s->size);
 }
 
-Key* dup_key(Key* k)
+Key *dup_key(Key *k)
 {
     return create_key(k->val, k->n);
 }
 
-Block* generate_block(int s, char* msg ,char* hash, char* prev)
+Block *generate_block(int s, char *msg, char *prev, int d)
 {
     Block *b = malloc(sizeof(Block));
-    b->author = create_key(0,0);
+    b->author = create_key(0, 0);
     b->votes = generate_cellprotected(s, msg);
-    b->nonce = 0;
-    b->hash = (unsigned char *)strdup(hash);
-    b->previous_hash = (unsigned char *)strdup(prev);
+    b->previous_hash = prev ? (unsigned char *)strdup(prev) : NULL;
+    compute_proof_of_work(b, d);
     return b;
+}
+
+CellTree *generate_test_tree(int array_size, char *msg)
+{
+    CellTree *t = NULL;
+    add_child(&t, create_node(generate_block(array_size, msg, "1", 0)));
+    add_child(&t, create_node(generate_block(array_size, msg, "2", 0)));
+    add_child(&t, create_node(generate_block(array_size, msg, "2b", 0)));
+    add_child(&t->firstChild, create_node(generate_block(array_size, msg, "3", 0)));
+    add_child(&t->firstChild->nextBro, create_node(generate_block(array_size, msg, "4", 0)));
+    return t;
 }
