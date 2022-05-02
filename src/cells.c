@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "keys.h"
 #include "cells.h"
+#include <string.h>
 
 // CellKey
 
@@ -26,6 +27,24 @@ CellKey *read_public_keys_fromp(char *name)
     {
         fscanf(f, "%s %s", buffer1, buffer2);
         k = str_to_key(buffer1);
+        add_cell_key(&kl, k);
+    };
+    fclose(f);
+    return kl;
+}
+// read from pair of public & private key
+// file must finish with a \n
+CellKey *read_secret_keys_fromp(char *name)
+{
+    FILE *f = fopen(name, "r");
+    char buffer1[STR_SIZE], buffer2[STR_SIZE];
+    fscanf(f, "%s %s\n", buffer1, buffer2);
+    Key *k = str_to_key(buffer1);
+    CellKey *kl = create_cell_key(k);
+    while (!feof(f))
+    {
+        fscanf(f, "%s %s", buffer1, buffer2);
+        k = str_to_key(buffer2);
         add_cell_key(&kl, k);
     };
     fclose(f);
@@ -114,21 +133,54 @@ void add_cell_protected(CellProtected **c, Protected *p)
     *c = rep;
 }
 
-CellProtected *read_protected(char *name)
+void reversecp(CellProtected *current, CellProtected *previous, CellProtected **head)
 {
-    FILE *f = fopen(name, "r");
-    char buffer[STR_SIZE];
-    fgets(buffer, sizeof(buffer), f);
-    Protected *p = str_to_protected(buffer);
-    CellProtected *pl = create_cell_protected(p);
+    if (!current->next)
+    {
+        *head = current;
+        current->next = previous;
+        return;
+    }
+    CellProtected *next = current->next;
+    current->next = previous;
+    reversecp(next, current, head);
+}
+
+void reverse_cell_protected(CellProtected **head)
+{
+    if (!head)
+        return;
+    reversecp(*head, NULL, head);
+}
+
+CellProtected *read_protected(char *filename)
+{
+    FILE *f = fopen(filename, "r");
+
+    if (f == NULL)
+    {
+        perror("Erreur lors de l'ouverture du fichier (read_protected).\n");
+        return NULL;
+    }
+
+    char pr_str[81], temp1[64], temp2[128];
+    Protected *pr;
+    CellProtected *liste = NULL;
     while (!feof(f))
     {
-        fgets(buffer, sizeof(buffer), f);
-        p = str_to_protected(buffer);
-        add_cell_protected(&pl, p);
+        fscanf(f, "%s %s %s\n", pr_str, temp1, temp2);
+        if (!(*pr_str && *temp1 && *temp2))
+            continue;
+        char buffer[STR_SIZE*2];
+        sprintf(buffer,"%s %s %s",pr_str, temp1, temp2);
+        // strcat(strcat(strcat(strcat(pr_str, " "), temp1), " "), temp2);
+        pr = str_to_protected(pr_str);
+        add_cell_protected(&liste, pr);
     }
+
     fclose(f);
-    return pl;
+
+    return liste;
 }
 
 void print_list_protected(CellProtected *l)
@@ -191,9 +243,9 @@ void delete_only_list_protected(CellProtected *c)
     } while (c);
 }
 
-void only_free_list_protected(CellProtected* l)
+void only_free_list_protected(CellProtected *l)
 {
-    CellProtected* t;
+    CellProtected *t;
     while (l)
     {
         t = l->next;
@@ -233,7 +285,7 @@ void delete_non_valid(CellProtected **c)
     }
 }
 
-CellProtected* fusion_protected(CellProtected *p1, CellProtected *p2)
+CellProtected *fusion_protected(CellProtected *p1, CellProtected *p2)
 {
     CellProtected *chaine = NULL;
 
@@ -245,7 +297,7 @@ CellProtected* fusion_protected(CellProtected *p1, CellProtected *p2)
 
     while (p2 != NULL)
     {
-        add_cell_protected(&chaine,p2->data);
+        add_cell_protected(&chaine, p2->data);
         p2 = p2->next;
     }
 

@@ -3,6 +3,7 @@
 #include "prime.h"
 #include "rsa.h"
 #include "btree.h"
+#include "generate.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -48,9 +49,34 @@ void fusion_blocks_tests()
     CellTree *t = generate_test_tree(ARRAY_SIZE, "uwu");
     CellProtected *p = fusion_blocks(t);
     print_list_protected(p);
-    // delete_only_list_protected(p);
     only_free_list_protected(p);
     delete_tree(t);
+}
+
+void create_block_tests()
+{
+    print_f("testing 'create_block' function\n");
+    generate_random_pending(ARRAY_SIZE);
+    Key *k = create_key(0, 0);
+    create_block(NULL, k, 0);
+    free_key(k);
+    Block *b = read_block(PENDB);
+    print_list_protected(b->votes);
+    delete_block(b);
+}
+
+void add_block_tests()
+{
+    print_f("testing 'add_block' function\n");
+    generate_random_pending(ARRAY_SIZE);
+    Key *k = create_key(0, 0);
+    create_block(NULL, k, 0);
+    free_key(k);
+    add_block(0, BCFOLDER_T "/t1.blk");
+
+    Block *b = read_block(PENDB);
+    print_list_protected(b->votes);
+    delete_block(b);
 }
 
 void btree_tests()
@@ -59,4 +85,6 @@ void btree_tests()
     create_node_tests();
     add_child_tests();
     fusion_blocks_tests();
+    create_block_tests();
+    add_block_tests();
 }

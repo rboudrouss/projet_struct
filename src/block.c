@@ -26,6 +26,8 @@ void write_block(char *filename, Block *block)
     fprintf(f, "%s %s %s %d\n", buffer, block->hash, block->previous_hash, block->nonce);
     free(buffer);
 
+    reverse_cell_protected(&block->votes);
+
     CellProtected *iter = block->votes;
     while (iter != NULL)
     {
@@ -36,6 +38,8 @@ void write_block(char *filename, Block *block)
 
         iter = iter->next;
     }
+    // TODO might not need
+    // reverse_cell_protected(&block->votes);
 
     fclose(f);
 }

@@ -34,6 +34,7 @@ typedef struct hastable
 CellKey *create_cell_key(Key *key);
 CellKey *read_public_keys(char *name);
 CellKey *read_public_keys_fromp(char *name);
+CellKey *read_secret_keys_fromp(char *name);
 void add_cell_key(CellKey **l, Key *k);
 void print_list_keys(CellKey *LCK);
 void delete_cell_key(CellKey *c);
@@ -42,6 +43,7 @@ void delete_list_keys(CellKey *c);
 // CellProtected
 CellProtected *create_cell_protected(Protected *pr);
 void add_cell_protected(CellProtected **c, Protected *p);
+void reverse_cell_protected(CellProtected** head);
 CellProtected *read_protected(char *name);
 void print_list_protected(CellProtected *l);
 void delete_cell_protected(CellProtected *c);

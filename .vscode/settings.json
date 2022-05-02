@@ -29,6 +29,7 @@
         "utils.h": "c",
         "tests.h": "c",
         "utils_tests.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "assert.h": "c"
     }
 }

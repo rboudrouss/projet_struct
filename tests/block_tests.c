@@ -57,6 +57,20 @@ void read_block_tests()
     assert(b->votes->data->pKey->n == 1);
     assert(!strcmp(b->votes->data->mess, "uwu"));
     delete_block(b);
+
+    b = generate_block(ARRAY_SIZE, "uwu", NULL, NBD_T);
+    char *str1 = block_to_str(b);
+    printf("str before RB : %s\n", str1);
+    write_block(PENDB_T, b);
+    delete_block(b);
+
+    b = read_block(PENDB_T);
+    char *str2 = block_to_str(b);
+    printf("str after RB : %s\n", str2);
+    assert(!strcmp(str1, str2));
+    delete_block(b);
+    free(str1);
+    free(str2);
 }
 
 void block_to_str_tests()

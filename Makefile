@@ -21,7 +21,7 @@ OBJS := $(HEADS:$(IDIR)%.h=$(BDIR)%.o)
 
 OBJS_TESTS := $(shell find $(TDIR) -name "*.c" -not -name "tests.c")
 
-TARGETS = main test
+TARGETS = main
 
 all: folders $(TARGETS) tests
 

@@ -14,3 +14,4 @@ void signs_tests();
 void cells_tests();
 void block_tests();
 void btree_tests();
+void generate_tests();

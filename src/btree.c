@@ -123,7 +123,8 @@ CellProtected *fusion_blocks(CellTree *tree)
 {
     CellTree *cell = highest_child(tree);
     CellProtected *rep = NULL, *new;
-    for (; cell; cell = cell->firstChild){
+    for (; cell; cell = cell->firstChild)
+    {
         new = fusion_protected(rep, cell->block->votes);
         only_free_list_protected(rep);
         rep = new;
@@ -142,22 +143,23 @@ void create_block(CellTree *tree, Key *author, int d)
     Block *b = malloc(sizeof(Block));
     b->author = author;
     if (tree)
-        b->previous_hash = last_node(tree)->block->hash;
+        b->previous_hash = (unsigned char *)strdup((char *)last_node(tree)->block->hash);
     else
-        b->previous_hash =(unsigned char*) strdup("null");
+        b->previous_hash = (unsigned char *)strdup("null");
     b->votes = pl;
     compute_proof_of_work(b, d);
     write_block(PENDB, b);
 
+    b->author = NULL; // HACK
     delete_block(b);
 }
 
 void add_block(int d, char *name)
 {
     Block *b = read_block(PENDB);
-    FILE *pbf = fopen(PENDB, "w");
-    fputc('\n', pbf);
-    fclose(pbf);
+    //FILE *pbf = fopen(PENDB, "w");
+    //fputc('\n', pbf);
+    //fclose(pbf);
 
     if (!verify_block(b, d))
     {

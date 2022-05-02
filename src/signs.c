@@ -86,5 +86,7 @@ Signature *str_to_signature(char *str)
             pos = 0;
         }
     content = realloc(content, num * sizeof(long));
-    return init_signature(content, num);
+    Signature* sgn = init_signature(content,num);
+    free(content);
+    return sgn;
 }
