@@ -15,7 +15,7 @@ Protected *init_protected(Key *pKey, char *mess, Signature *sgn)
 
 void free_protected(Protected *p)
 {
-    if(!p)
+    if (!p)
         return;
     free_signature(p->sgn);
     free_key(p->pKey);
@@ -25,7 +25,7 @@ void free_protected(Protected *p)
 
 int verify(Protected *pr)
 {
-    if(!pr)
+    if (!pr)
         return 0;
     if (strlen(pr->mess) != pr->sgn->size)
         return 0; // make it faster, it takes some time to decrypt
@@ -38,7 +38,7 @@ int verify(Protected *pr)
 char *protected_to_str(Protected *pr)
 {
     char *rep = malloc(STR_SIZE * sizeof(char));
-    char* k = key_to_str(pr->pKey), *s = signature_to_str(pr->sgn);
+    char *k = key_to_str(pr->pKey), *s = signature_to_str(pr->sgn);
     sprintf(rep, "%s %s %s", k, pr->mess, s);
     free(k);
     free(s);
@@ -59,8 +59,12 @@ Protected *str_to_protected(char *str)
 
 void submit_vote(Protected *p)
 {
-    // TODO Test this fonction
-    FILE *f = fopen(PENDV, "a+");
+    FILE *f;
+    f = fopen(PENDV, "a+");
+    if (!f){
+        printf("submit_vote : file does not exist, opening in read mode");
+        f = fopen(PENDV, "w");
+    }
     char *vote = protected_to_str(p);
     fputs(vote, f);
     fputc('\n', f);

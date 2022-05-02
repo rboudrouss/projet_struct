@@ -157,9 +157,9 @@ void create_block(CellTree *tree, Key *author, int d)
 void add_block(int d, char *name)
 {
     Block *b = read_block(PENDB);
-    //FILE *pbf = fopen(PENDB, "w");
-    //fputc('\n', pbf);
-    //fclose(pbf);
+    // FILE *pbf = fopen(PENDB, "w");
+    // fputc('\n', pbf);
+    // fclose(pbf);
 
     if (!verify_block(b, d))
     {
@@ -171,25 +171,93 @@ void add_block(int d, char *name)
     delete_block(b);
 }
 
-CellTree *read_tree()
-{
-    // FIXME erreur lors de l'ouverture du fichiers
-    DIR *rep = opendir(BCFOLDER);
-    Block *b;
-    CellTree *c = NULL, *c2;
-    if (rep != NULL)
-    {
-        struct dirent *dir;
-        while ((dir = readdir(rep)))
-        {
-            if ((strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..") && strcmp(dir->d_name, "temp")))
-            {
-                b = read_block(strcat(BCFOLDER "/", dir->d_name));
-                c2 = create_node(b);
-                add_child(&c, c2);
+CellTree* read_tree() {
+    DIR* rep = opendir(BCFOLDER);
+    struct dirent* dir;
+
+    int file_no = 0, i = 0;
+
+    if (rep != NULL) {
+        // Counting all files
+        while ((dir = readdir(rep))) {
+            if (strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..")) {  // Neither . nor ..
+                file_no++;
             }
         }
-        closedir(rep);
+    } else return NULL;
+
+    CellTree* node_arr[file_no];
+
+    rewinddir(rep);
+    chdir(BCFOLDER);  // Moving to the correct directory
+    while ((dir = readdir(rep))) {
+        if (strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..")) {  // Neither . nor ..
+            Block* block = read_block(dir->d_name);
+            node_arr[i] = create_node(block);  // Will break
+            i++;
+        }
     }
-    return c;
+
+    closedir(rep);
+    chdir("..");
+
+    for (i = 0; i < file_no; i++) {
+        for (int j = 0; j < file_no; j++) {
+            if (i == j) continue;  // Do not compare with self
+
+            if ((node_arr[j]->block->previous_hash) && (strcmp((char*)node_arr[i]->block->hash, (char*)node_arr[j]->block->previous_hash) == 0)) {
+                add_child(&node_arr[i], node_arr[j]);
+            }
+        }
+    }
+
+    CellTree* root = NULL;
+    for (int i = 0; i < file_no; i++) {
+        if (node_arr[i]->father == NULL) root = node_arr[i];
+    }
+
+    if (root == NULL) perror("Returning NULL in read_tree.\n");
+    return root;
+}
+
+Key *compute_winner_BT(CellTree *tree, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
+{
+    CellProtected *votes = fusion_blocks(tree);
+    delete_non_valid(&votes);
+
+    Key *winner = compute_winner(votes, candidates, voters, sizeC, sizeV);
+
+    while (votes != NULL)
+    {
+        CellProtected *temp = votes;
+        votes = votes->next;
+        free(temp);
+    }
+
+    return winner;
+}
+
+void free_all_protected_in_tree(CellTree *tree)
+{
+    while (tree != NULL)
+    {
+
+        CellProtected *votes = tree->block->votes;
+        while (votes != NULL)
+        {
+            free_protected(votes->data);
+            votes = votes->next;
+        }
+
+        tree = tree->firstChild;
+    }
+}
+
+void free_all_authors_in_tree(CellTree *tree)
+{
+    while (tree != NULL)
+    {
+        free(tree->block->author);
+        tree = tree->firstChild;
+    }
 }

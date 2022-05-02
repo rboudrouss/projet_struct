@@ -25,4 +25,7 @@ CellProtected *fusion_blocks(CellTree *tree);
 void create_block(CellTree *tree, Key *author, int d);
 void add_block(int d, char *name);
 CellTree *read_tree();
+Key *compute_winner_BT(CellTree *tree, CellKey *candidates, CellKey *voters, int sizeC, int sizeV);
+void free_all_protected_in_tree(CellTree *tree);
+void free_all_authors_in_tree(CellTree *tree);
 #endif

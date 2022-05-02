@@ -171,9 +171,9 @@ CellProtected *read_protected(char *filename)
         fscanf(f, "%s %s %s\n", pr_str, temp1, temp2);
         if (!(*pr_str && *temp1 && *temp2))
             continue;
-        char buffer[STR_SIZE*2];
-        sprintf(buffer,"%s %s %s",pr_str, temp1, temp2);
-        // strcat(strcat(strcat(strcat(pr_str, " "), temp1), " "), temp2);
+        // char buffer[STR_SIZE*2];
+        // sprintf(buffer,"%s %s %s",pr_str, temp1, temp2);
+        strcat(strcat(strcat(strcat(pr_str, " "), temp1), " "), temp2);
         pr = str_to_protected(pr_str);
         add_cell_protected(&liste, pr);
     }

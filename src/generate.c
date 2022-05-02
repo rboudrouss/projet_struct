@@ -29,7 +29,7 @@ void generate_random_data(int nv, int nc, int np)
     printf("Generating %d random signatures...\n", nv - np);
     generate_signature(nv - np);
     printf("Generating pending %d votes...\n", np);
-    generate_pending(nv - np, np);
+    generate_pending(nv - np, nv);
     printf("All data generated !\n");
 }
 
@@ -125,7 +125,8 @@ void generate_pending(int ns, int np)
     int nv = get_length(pkeys);
     int nc = get_length(ckeys);
 
-    assert(np + ns <= nv);
+    assert(np <= nv);
+    assert(ns < np);
 
     int r;
     char *str1;

@@ -186,7 +186,6 @@ int verify_block(Block *b, int d)
 {
     char *strb = block_to_str(b);
     unsigned char *hash = hashf(strb);
-    printf("%s || %s \n", hash, b->hash);
     int rep = !strcmp((char *)hash, (char *)b->hash);
     rep = rep && first_d_zero(b->hash, d);
     free(strb);
