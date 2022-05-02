@@ -19,17 +19,15 @@ int get_length(CellKey *l)
     return i - 1;
 }
 
-void generate_random_data(int nv, int nc, int np)
+void generate_random_data(int nv, int nc)
 {
     printf("Generating data...\n");
     printf("Generating %d random keys...\n", nv);
     generate_random_keys(nv);
     printf("Generating %d random candidates...\n", nc);
     generate_random_cand(nc);
-    printf("Generating %d random signatures...\n", nv - np);
-    generate_signature(nv - np);
-    printf("Generating pending %d votes...\n", np);
-    generate_pending(nv - np, nv);
+    printf("Generating %d random signatures...\n", nv);
+    generate_signature(nv);
     printf("All data generated !\n");
 }
 
@@ -37,7 +35,7 @@ void generate_random_keys(int nv)
 {
     if (nv < 1)
         return;
-    FILE *keysf = fopen(KEYSF, "wb");
+    FILE *keysf = fopen(KEYSF, "w");
     Key *pk = malloc(sizeof(Key)), *sk = malloc(sizeof(Key));
     char *str1, *str2;
     // génére les votants

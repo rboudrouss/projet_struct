@@ -19,7 +19,7 @@ int main()
     generate_tests();
     block_tests();
 
-    generate_random_data((int)ARRAY_SIZE * 1.5, 10, ARRAY_SIZE);
+    generate_random_data((int)ARRAY_SIZE * 1.5, 10);
 
     btree_tests();
 

@@ -11,6 +11,6 @@
 void generate_tests()
 {
     print_f("\ntesting 'generate.c' file\n\n");
-    generate_random_data(ARRAY_SIZE, (int)ARRAY_SIZE / 10 + 2, (int)ARRAY_SIZE / 5 - 1);
+    generate_random_data(ARRAY_SIZE, (int)ARRAY_SIZE / 10 + 2);
     generate_random_pending(ARRAY_SIZE - 1);
 }

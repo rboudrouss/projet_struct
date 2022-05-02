@@ -12,18 +12,21 @@
 #define NP 10
 #define NBD 2
 
+#define NB_BLK 10
+
 int main()
 {
     srand(time(NULL));
 
+    system("mkdir -p blockchain/temp");
     system("find blockchain -maxdepth 2 -type f -delete");
 
-    printf("Generating random data... ");
+    printf("Generating random data... \n");
     fflush(stdout);
-    generate_random_data(NV, NC, NP);
+    generate_random_data(NV, NC);
     printf("done.\n");
 
-    printf("Reading files... ");
+    printf("Reading files... \n");
     fflush(stdout);
     CellProtected *votes = read_protected(DECF);
     CellKey *keys = read_public_keys_fromp(KEYSF);
@@ -36,11 +39,12 @@ int main()
     int count = 0, file_number = 0;
     char file_name[128];
 
-    printf("Building tree... ");
+    printf("Building tree... \n");
     fflush(stdout);
 
     Key *author = malloc(sizeof(Key));
     init_key(author, 0, 0);
+
     while (votes != NULL)
     {
         submit_vote(votes->data);
@@ -56,8 +60,6 @@ int main()
 
             count = 0;
 
-            free_all_protected_in_tree(tree);
-            free_all_authors_in_tree(tree);
             delete_tree(tree);
 
             tree = read_tree();
@@ -75,12 +77,12 @@ int main()
         sprintf(file_name, "%s/%d.blk", BCFOLDER, file_number);
         add_block(NBD, file_name);
 
-        free_all_protected_in_tree(tree);
-        free_all_authors_in_tree(tree);
         delete_tree(tree);
 
         tree = read_tree();
     }
+    free(author);
+    author = NULL;
     printf("done.\n");
 
     int should_print;
@@ -94,14 +96,9 @@ int main()
     Key *winner = compute_winner_BT(tree, candidates, keys, NC, NV);
 
     if (winner != NULL)
-    {
         printf("Winner: (%lx, %lx)\n", winner->val, winner->n);
-        free(winner);
-    }
 
     // Freeing tree
-    free_all_authors_in_tree(tree);
-    free_all_protected_in_tree(tree);
     delete_tree(tree);
 
     // Freeing voters, candidates and votes

@@ -171,10 +171,13 @@ CellProtected *read_protected(char *filename)
         fscanf(f, "%s %s %s\n", pr_str, temp1, temp2);
         if (!(*pr_str && *temp1 && *temp2))
             continue;
-        // char buffer[STR_SIZE*2];
-        // sprintf(buffer,"%s %s %s",pr_str, temp1, temp2);
-        strcat(strcat(strcat(strcat(pr_str, " "), temp1), " "), temp2);
-        pr = str_to_protected(pr_str);
+
+        char *temp12 = strdup(temp1); // HACK
+        char *temp22 = strdup(temp2);
+        char *full_str = strcat(strcat(strcat(strcat(pr_str, " "), temp12), " "), temp22);
+        free(temp12);
+        free(temp22);
+        pr = str_to_protected(full_str);
         add_cell_protected(&liste, pr);
     }
 
@@ -352,8 +355,10 @@ int find_position(HashTable *t, Key *key)
 
 void insert_key_table(HashTable *t, Key *key)
 {
-    HashCell *c = create_hashcell(key);
     int pos = find_position(t, key);
+    if(t->tab[pos])
+        return;
+    HashCell *c = create_hashcell(key);
     t->tab[pos] = c;
 }
 

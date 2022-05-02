@@ -35,17 +35,6 @@ void sign_tests()
     free_key(k2);
 }
 
-void str_to_signature_tests()
-{
-    // TODO
-}
-
-void signature_to_str_tests()
-{
-    // TODO
-}
-
-
 void signs_tests()
 {
     print_f("\ntesting 'signs.c' file\n\n");

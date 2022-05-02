@@ -38,8 +38,8 @@ void write_block(char *filename, Block *block)
 
         iter = iter->next;
     }
-    // TODO might not need
-    // reverse_cell_protected(&block->votes);
+
+    // reverse_cell_protected(&block->votes); // TODO might not need
 
     fclose(f);
 }
@@ -59,7 +59,6 @@ Block *read_block(char *filename)
     int nonce;
     char key_str[16], hash[128], prev_hash[128];
     fscanf(f, "%s %s %s %d\n", key_str, hash, prev_hash, &nonce);
-
     Key *key = str_to_key(key_str);
 
     // Creating the block
@@ -84,15 +83,20 @@ Block *read_block(char *filename)
         block->previous_hash = (unsigned char *)strdup(prev_hash);
 
     // Reading votes
-    char pr_str[128], temp1[128], temp2[128];
+    char pr_str[STR_SIZE], temp1[STR_SIZE], temp2[STR_SIZE];
     Protected *pr;
     CellProtected *liste = NULL;
     while (!feof(f))
     {
         fscanf(f, "%s %s %s\n", pr_str, temp1, temp2);
-        strcat(strcat(strcat(strcat(pr_str, " "), temp1), " "), temp2);
 
-        pr = str_to_protected(pr_str);
+        char *temp12 = strdup(temp1); // HACK
+        char *temp22 = strdup(temp2);
+        char *full_str = strcat(strcat(strcat(strcat(pr_str, " "), temp12), " "), temp22);
+        free(temp22);
+        free(temp12);
+
+        pr = str_to_protected(full_str);
 
         add_cell_protected(&liste, pr);
     }
@@ -192,8 +196,6 @@ int verify_block(Block *b, int d)
     free(hash);
     return rep;
 }
-
-// TODO q7.8
 
 void delete_block(Block *b)
 {

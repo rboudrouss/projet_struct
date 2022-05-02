@@ -171,29 +171,37 @@ void add_block(int d, char *name)
     delete_block(b);
 }
 
-CellTree* read_tree() {
-    DIR* rep = opendir(BCFOLDER);
-    struct dirent* dir;
+CellTree *read_tree()
+{
+    DIR *rep = opendir(BCFOLDER);
+    struct dirent *dir;
 
     int file_no = 0, i = 0;
 
-    if (rep != NULL) {
+    if (rep != NULL)
+    {
         // Counting all files
-        while ((dir = readdir(rep))) {
-            if (strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..")) {  // Neither . nor ..
+        while ((dir = readdir(rep)))
+        {
+            if (strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..") && strcmp(dir->d_name, "temp"))
+            { // Neither . nor ..
                 file_no++;
             }
         }
-    } else return NULL;
+    }
+    else
+        return NULL;
 
-    CellTree* node_arr[file_no];
+    CellTree *node_arr[file_no];
 
     rewinddir(rep);
-    chdir(BCFOLDER);  // Moving to the correct directory
-    while ((dir = readdir(rep))) {
-        if (strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..")) {  // Neither . nor ..
-            Block* block = read_block(dir->d_name);
-            node_arr[i] = create_node(block);  // Will break
+    chdir(BCFOLDER); // Moving to the correct directory
+    while ((dir = readdir(rep)))
+    {
+        if (strcmp(dir->d_name, ".") && strcmp(dir->d_name, "..") && strcmp(dir->d_name, "temp"))
+        { // Neither . nor ..
+            Block *block = read_block(dir->d_name);
+            node_arr[i] = create_node(block); // Will break
             i++;
         }
     }
@@ -201,22 +209,29 @@ CellTree* read_tree() {
     closedir(rep);
     chdir("..");
 
-    for (i = 0; i < file_no; i++) {
-        for (int j = 0; j < file_no; j++) {
-            if (i == j) continue;  // Do not compare with self
+    for (i = 0; i < file_no; i++)
+    {
+        for (int j = 0; j < file_no; j++)
+        {
+            if (i == j)
+                continue; // Do not compare with self
 
-            if ((node_arr[j]->block->previous_hash) && (strcmp((char*)node_arr[i]->block->hash, (char*)node_arr[j]->block->previous_hash) == 0)) {
+            if ((node_arr[j]->block->previous_hash) && (strcmp((char *)node_arr[i]->block->hash, (char *)node_arr[j]->block->previous_hash) == 0))
+            {
                 add_child(&node_arr[i], node_arr[j]);
             }
         }
     }
 
-    CellTree* root = NULL;
-    for (int i = 0; i < file_no; i++) {
-        if (node_arr[i]->father == NULL) root = node_arr[i];
+    CellTree *root = NULL;
+    for (int i = 0; i < file_no; i++)
+    {
+        if (node_arr[i]->father == NULL)
+            root = node_arr[i];
     }
 
-    if (root == NULL) perror("Returning NULL in read_tree.\n");
+    if (root == NULL)
+        perror("Returning NULL in read_tree.\n");
     return root;
 }
 

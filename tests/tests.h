@@ -3,7 +3,7 @@
 
 #define SM 15
 #define B 10
-#define ARRAY_SIZE 10
+#define ARRAY_SIZE 5
 #define NBD_T 3
 
 void keys_tests();
