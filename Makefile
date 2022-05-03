@@ -3,7 +3,7 @@ DEBUG ?= 1
 CC=gcc
 
 BDIR = ./bin/
-IDIR = ./head/
+IDIR = ./include/
 SDIR = ./src/
 RDIR = ./report/
 TDIR = ./tests/
@@ -15,6 +15,8 @@ ifeq ($(DEBUG), 1)
 else
     CFLAGS += -O3
 endif
+
+RESS := $(shell find $(RDIR) -name "*.*")
 
 HEADS := $(shell find $(IDIR) -name *.h -not -name "*files.h")
 OBJS := $(HEADS:$(IDIR)%.h=$(BDIR)%.o)
@@ -40,12 +42,9 @@ tests: $(OBJS) $(OBJS_TESTS)
 %_tests.o: $(TDIR)%_tests.c
 	$(CC) -c -o $@ $< $(CFLAGS) $(DEB)
 
-rapport:
+rapport: $(RESS)
 	pandoc $(RDIR)*.md \
 	-H $(RDIR)theme.tex \
-    -V geometry:a4paper \
-    -V mainfont="DejaVu Serif" \
-    -V monofont="DejaVu Sans Mono" \
     --pdf-engine=xelatex \
 	-o rapport.pdf
 
