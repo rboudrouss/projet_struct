@@ -43,12 +43,9 @@ tests: $(OBJS) $(OBJS_TESTS)
 	$(CC) -c -o $@ $< $(CFLAGS) $(DEB)
 
 rapport: $(RESS)
-	pandoc $(RDIR)*.md \
-	-H $(RDIR)theme.tex \
-    --pdf-engine=xelatex \
-	-o rapport.pdf
+	pandoc $(RDIR)*.md --listings -H $(RDIR)theme.tex --pdf-engine=xelatex -o rapport.pdf
 
 clean:
-	rm -f vgcore* bin/*
+	rm -f vgcore* bin/* *.log
 	find blockchain -maxdepth 2 -type f -delete
 	find tests/blockchain -maxdepth 2 -type f -delete

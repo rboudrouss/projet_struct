@@ -1,5 +1,12 @@
+# binaries
 bin/
-crypto/
+
+# valgrind logs
 vgcore*
+
+# pandoc logs
+*.log
+
+# generated data
 blockchain/*
 tests/blockchain/*
