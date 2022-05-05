@@ -44,6 +44,7 @@ tests: $(OBJS) $(OBJS_TESTS)
 
 rapport: $(RESS)
 	pandoc $(RDIR)*.md --listings -H $(RDIR)theme.tex --pdf-engine=xelatex -o rapport.pdf
+# if u wanna compile it yourself, be sure to have the fonts listed un report/0-title.md
 
 clean:
 	rm -f vgcore* bin/* *.log

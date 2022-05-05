@@ -251,28 +251,3 @@ Key *compute_winner_BT(CellTree *tree, CellKey *candidates, CellKey *voters, int
 
     return winner;
 }
-
-void free_all_protected_in_tree(CellTree *tree)
-{
-    while (tree != NULL)
-    {
-
-        CellProtected *votes = tree->block->votes;
-        while (votes != NULL)
-        {
-            free_protected(votes->data);
-            votes = votes->next;
-        }
-
-        tree = tree->firstChild;
-    }
-}
-
-void free_all_authors_in_tree(CellTree *tree)
-{
-    while (tree != NULL)
-    {
-        free(tree->block->author);
-        tree = tree->firstChild;
-    }
-}

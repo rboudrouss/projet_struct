@@ -18,7 +18,6 @@ int main()
 {
     srand(time(NULL));
 
-    system("mkdir -p blockchain/temp");
     system("find blockchain -maxdepth 2 -type f -delete");
 
     printf("Generating random data... \n");

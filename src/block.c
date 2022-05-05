@@ -173,6 +173,8 @@ void compute_proof_of_work(Block *b, int d)
 {
     b->nonce = 0;
     char *strb = block_to_str(b);
+    if(b->hash)
+        free(b->hash);
     b->hash = hashf(strb);
 
     while (!first_d_zero(b->hash, d))

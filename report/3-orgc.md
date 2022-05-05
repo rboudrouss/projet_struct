@@ -65,7 +65,7 @@ Les fichiers contiennent donc les différentes fonctions pour initialiser, véri
 
 *J'aurais du découper ce fichier en plusieurs fichiers.*
 
-Ces fichiers regroupent les fonctions dépendantes des 3 structures suivantes :
+Ces fichiers regroupent les fonctions dépendantes des 4 structures suivantes :
 
 * **`CellKey`** & **`CellProtected`**
 
@@ -114,4 +114,46 @@ Nous avons aussi une fonction importante :
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV);
 ```
 Cette fonction détermine le gagnant de l'élection à partir de la liste chainées de vote et des clées des votant et des candidats. 
+<!---
 Nous l'expliquerons plus en détail plus tard dans le rapport.
+    TODO don't forget
+-->
+
+- **`Block`**
+
+Ces fichiers reposent sur la structure suivantes :
+
+```c
+typedef struct block
+{
+    Key *author;
+    CellProtected *votes;
+    unsigned char *hash;
+    unsigned char *previous_hash;
+    int nonce;
+} Block;
+```
+
+Cette structure représente un block d'une blockchaine. 
+Elle contient la liste des déclarations de votes, le hash du block et le hash des block précédent, le `nonce` et la clé de l'auteur.
+
+Nous avons donc des fonctions pour écrire/lire un block dans un fichier. convertir en str et vice versa et faire l'algorithme de proof of work.
+
+- **`btree`**
+
+Ces fichiers reposent sur la structure suivantes :
+
+```c
+typedef struct block_tree_cell
+{
+    Block *block;
+    struct block_tree_cell *father;
+    struct block_tree_cell *firstChild;
+    struct block_tree_cell *nextBro;
+    int height;
+} CellTree;
+```
+
+Cette structure représente l'arbre de tout les blocks de la blockchain. Chaque bloc a un block qui le précéde, et plusieurs blocks suivant.
+
+Dans ces fichiers nous avons donc toutes les fonctions d'insertion d'un block dans un arbre, d'écriture de l'arbre dans le dossier **`blockchain/`**.
